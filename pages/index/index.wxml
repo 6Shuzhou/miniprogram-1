@@ -1,0 +1,204 @@
+<view class="page">
+  <view class="title">麻将买马计算器</view>
+
+  <view class="section">
+    <view class="section-title">1. 谁胡了？</view>
+
+    <view class="row">
+      <view class="label">胡牌方式：</view>
+      <picker range="{{winTypeLabels}}" value="{{winTypeIndex}}" bindchange="onWinTypeChange">
+        <view class="picker">{{winTypeLabels[winTypeIndex]}}</view>
+      </picker>
+    </view>
+
+    <block wx:if="{{winType === 'self'}}">
+      <view class="row">
+        <view class="label">自摸玩家：</view>
+        <picker range="{{players}}" value="{{winnerIndex}}" bindchange="onWinnerChange">
+          <view class="picker">{{players[winnerIndex]}}</view>
+        </picker>
+      </view>
+
+      <view class="row">
+        <view class="label">自摸番数：</view>
+        <picker range="{{selfFanOptions}}" value="{{selfFanIndex}}" bindchange="onSelfFanChange">
+          <view class="picker">{{selfFanOptions[selfFanIndex]}} 番</view>
+        </picker>
+      </view>
+    </block>
+
+    <block wx:if="{{winType === 'discard'}}">
+      <view class="row">
+        <view class="label">胡牌玩家：</view>
+        <picker range="{{players}}" value="{{winnerIndex}}" bindchange="onWinnerChange">
+          <view class="picker">{{players[winnerIndex]}}</view>
+        </picker>
+      </view>
+
+      <view class="row">
+        <view class="label">点炮玩家：</view>
+        <picker range="{{players}}" value="{{discarderIndex}}" bindchange="onDiscarderChange">
+          <view class="picker">{{players[discarderIndex]}}</view>
+        </picker>
+      </view>
+
+      <view class="row">
+        <view class="label">点炮番数：</view>
+        <picker range="{{discardFanOptions}}" value="{{discardFanIndex}}" bindchange="onDiscardFanChange">
+          <view class="picker">{{discardFanOptions[discardFanIndex]}} 番</view>
+        </picker>
+      </view>
+    </block>
+  </view>
+
+  <view class="section">
+    <view class="section-title">2. 杠牌</view>
+
+    <view class="button-row">
+      <button size="mini" bindtap="addDirectKong">添加直杠</button>
+      <button size="mini" bindtap="addAddedKong">添加加杠</button>
+      <button size="mini" bindtap="addConcealedKong">添加暗杠</button>
+    </view>
+
+    <view wx:if="{{kongs.length === 0}}" class="empty">暂无杠牌</view>
+
+    <block wx:for="{{kongs}}" wx:key="id">
+      <view class="kong-card">
+        <view class="kong-title">第 {{index + 1}} 个杠</view>
+
+        <view class="row">
+          <view class="label">杠类型：</view>
+          <picker range="{{kongTypeLabels}}" value="{{item.typeIndex}}" data-index="{{index}}" bindchange="onKongTypeChange">
+            <view class="picker">{{kongTypeLabels[item.typeIndex]}}</view>
+          </picker>
+        </view>
+
+        <view class="row">
+          <view class="label">杠牌者：</view>
+          <picker range="{{players}}" value="{{item.playerIndex}}" data-index="{{index}}" bindchange="onKongPlayerChange">
+            <view class="picker">{{players[item.playerIndex]}}</view>
+          </picker>
+        </view>
+
+        <block wx:if="{{item.typeIndex === 0}}">
+          <view class="row">
+            <view class="label">点杠者：</view>
+            <picker range="{{players}}" value="{{item.fromIndex}}" data-index="{{index}}" bindchange="onKongFromChange">
+              <view class="picker">{{players[item.fromIndex]}}</view>
+            </picker>
+          </view>
+        </block>
+
+        <button class="delete-btn" size="mini" data-index="{{index}}" bindtap="removeKong">删除</button>
+      </view>
+    </block>
+  </view>
+
+  <view class="section">
+    <view class="section-title">3. 买马结果</view>
+
+    <view class="tip">
+      输入每张马牌，用逗号/空格分隔。支持牌面（如 1万、东、5筒、中）或纯数字。
+    </view>
+
+    <input
+      class="input"
+      value="{{horseInput}}"
+      placeholder="例如：1万,东,5筒,中,白"
+      bindinput="onHorseInput"
+    />
+
+    <view class="tip">
+      映射规则：数字按牌面取值（东=1，南=2，西=3，北=4，中=1，发=2，白=3，数牌取数字），然后按 1=庄家，2=下家，3=对家，4=上家循环。
+    </view>
+  </view>
+
+  <view class="section">
+    <view class="button-row">
+      <button type="primary" bindtap="calculate">计算</button>
+      <button bindtap="loadDiscardDemo">点炮测试</button>
+      <button bindtap="loadSelfDrawDemo">自摸测试</button>
+      <button bindtap="resetAll">重置</button>
+    </view>
+  </view>
+
+  <block wx:if="{{horseDetails.length > 0}}">
+    <view class="section">
+      <view class="section-title">买马映射</view>
+
+      <block wx:for="{{horseDetails}}" wx:key="index">
+        <view class="line">{{item.display}}（{{item.card}}） → {{item.player}}</view>
+      </block>
+
+      <view class="summary">
+        庄家：{{horseCountsText[0]}} 次；
+        下家：{{horseCountsText[1]}} 次；
+        对家：{{horseCountsText[2]}} 次；
+        上家：{{horseCountsText[3]}} 次
+      </view>
+    </view>
+  </block>
+
+  <block wx:if="{{baseRows.length > 0}}">
+    <view class="section">
+      <view class="section-title">不含买马的基础结果</view>
+
+      <view class="table">
+        <view class="tr th">
+          <view class="td">玩家</view>
+          <view class="td">收入</view>
+          <view class="td">支出</view>
+          <view class="td">净输赢</view>
+        </view>
+
+        <block wx:for="{{baseRows}}" wx:key="name">
+          <view class="tr">
+            <view class="td">{{item.name}}</view>
+            <view class="td">{{item.income}}</view>
+            <view class="td">{{item.expense}}</view>
+            <view class="td {{item.scoreClass}}">{{item.scoreText}}</view>
+          </view>
+        </block>
+      </view>
+    </view>
+  </block>
+
+  <block wx:if="{{resultRows.length > 0}}">
+    <view class="section">
+      <view class="section-title">最终结果</view>
+
+      <view class="table">
+        <view class="tr th">
+          <view class="td">玩家</view>
+          <view class="td">收入</view>
+          <view class="td">支出</view>
+          <view class="td">净输赢</view>
+        </view>
+
+        <block wx:for="{{resultRows}}" wx:key="name">
+          <view class="tr">
+            <view class="td">{{item.name}}</view>
+            <view class="td">{{item.income}}</view>
+            <view class="td">{{item.expense}}</view>
+            <view class="td {{item.scoreClass}}">{{item.scoreText}}</view>
+          </view>
+        </block>
+      </view>
+
+      <view class="total">合计：{{totalScore}}</view>
+    </view>
+  </block>
+
+  <block wx:if="{{finalTransactions.length > 0}}">
+    <view class="section">
+      <view class="section-title">结算明细</view>
+
+      <block wx:for="{{finalTransactions}}" wx:key="index">
+        <view class="transaction">
+          <view>{{item.payer}} → {{item.receiver}}：{{item.amount}} 番</view>
+          <view class="reason">{{item.reason}}</view>
+        </view>
+      </block>
+    </view>
+  </block>
+</view>

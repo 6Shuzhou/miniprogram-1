@@ -1,0 +1,177 @@
+page {
+  background: #f5f5f5;
+  color: #222;
+  font-size: 28rpx;
+}
+
+.page {
+  padding: 24rpx;
+  box-sizing: border-box;
+}
+
+.title {
+  font-size: 40rpx;
+  font-weight: 700;
+  margin-bottom: 24rpx;
+  text-align: center;
+}
+
+.section {
+  background: #ffffff;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  margin-bottom: 24rpx;
+  box-sizing: border-box;
+}
+
+.section-title {
+  font-size: 32rpx;
+  font-weight: 700;
+  margin-bottom: 20rpx;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 18rpx;
+}
+
+.label {
+  width: 190rpx;
+  color: #555;
+}
+
+.picker {
+  min-width: 220rpx;
+  background: #f0f0f0;
+  border-radius: 10rpx;
+  padding: 14rpx 18rpx;
+  box-sizing: border-box;
+}
+
+.input {
+  height: 80rpx;
+  background: #f0f0f0;
+  border-radius: 10rpx;
+  padding: 0 20rpx;
+  margin-top: 16rpx;
+  margin-bottom: 16rpx;
+  box-sizing: border-box;
+}
+
+.tip {
+  font-size: 24rpx;
+  line-height: 1.6;
+  color: #666;
+}
+
+.button-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+}
+
+.empty {
+  color: #999;
+  padding: 20rpx 0;
+}
+
+.kong-card {
+  background: #fafafa;
+  border: 1rpx solid #e5e5e5;
+  border-radius: 12rpx;
+  padding: 20rpx;
+  margin-top: 18rpx;
+}
+
+.kong-title {
+  font-weight: 700;
+  margin-bottom: 16rpx;
+}
+
+.delete-btn {
+  margin-top: 10rpx;
+}
+
+.line {
+  padding: 8rpx 0;
+}
+
+.summary {
+  margin-top: 12rpx;
+  font-weight: 700;
+  line-height: 1.6;
+}
+
+.table {
+  border: 1rpx solid #dddddd;
+  border-radius: 10rpx;
+  overflow: hidden;
+}
+
+.tr {
+  display: flex;
+  border-bottom: 1rpx solid #eeeeee;
+}
+
+.tr:last-child {
+  border-bottom: none;
+}
+
+.th {
+  background: #f0f0f0;
+  font-weight: 700;
+}
+
+.td {
+  flex: 1;
+  padding: 16rpx 6rpx;
+  text-align: center;
+  box-sizing: border-box;
+  word-break: break-all;
+}
+
+.win {
+  flex: 1;
+  padding: 16rpx 6rpx;
+  text-align: center;
+  color: #008000;
+  font-weight: 700;
+}
+
+.lose {
+  flex: 1;
+  padding: 16rpx 6rpx;
+  text-align: center;
+  color: #d93025;
+  font-weight: 700;
+}
+
+.even {
+  flex: 1;
+  padding: 16rpx 6rpx;
+  text-align: center;
+  color: #333333;
+  font-weight: 700;
+}
+
+.total {
+  margin-top: 18rpx;
+  font-weight: 700;
+}
+
+.transaction {
+  padding: 16rpx 0;
+  border-bottom: 1rpx solid #eeeeee;
+}
+
+.transaction:last-child {
+  border-bottom: none;
+}
+
+.reason {
+  margin-top: 6rpx;
+  color: #777777;
+  font-size: 24rpx;
+  line-height: 1.5;
+}
