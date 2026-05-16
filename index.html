@@ -361,18 +361,9 @@
         <!-- 操作 -->
         <div class="card">
             <div class="btn-row">
-                <button class="btn btn-primary" onclick="calculate()" style="flex:1;font-size:16px;padding:12px;">🀄 计算结算</button>
-                <button class="btn btn-secondary" onclick="loadDemo('self')">自摸示例</button>
-                <button class="btn btn-secondary" onclick="loadDemo('discard')">点炮示例</button>
+                <button class="btn btn-primary" onclick="calculate()" style="flex:1;font-size:16px;padding:12px;">🀄 计算结果</button>
                 <button class="btn btn-secondary" onclick="resetAll()">重置</button>
             </div>
-        </div>
-
-        <!-- 买马映射结果 -->
-        <div id="horseResultCard" class="card hidden">
-            <div class="card-title">买马映射</div>
-            <div id="horseTags"></div>
-            <div id="horseSummary" style="margin-top:10px;font-size:14px;color:#555;"></div>
         </div>
 
         <!-- 基础结果 -->
@@ -458,17 +449,10 @@ let selectedHorses = [];
 
 function renderTileButtons() {
     const numberContainer = document.getElementById('numberTiles');
-    const suits = [
-        { name: '万', cls: 'suit-w' },
-        { name: '条', cls: 'suit-t' },
-        { name: '筒', cls: 'suit-b' }
-    ];
     let numberHtml = '';
     for (let n = 1; n <= 9; n++) {
-        const suit = suits[(n - 1) % 3];
-        numberHtml += `<div class="tile-btn ${suit.cls}" onclick="addHorse('${n}${suit.name}')">
-            <div>${n}${suit.name}</div>
-            <div class="tile-num">${n}</div>
+        numberHtml += `<div class="tile-btn" onclick="addHorse('${n}')">
+            <div style="font-size:22px">${n}</div>
         </div>`;
     }
     numberContainer.innerHTML = numberHtml;
@@ -578,39 +562,12 @@ function resetAll() {
 }
 
 function hideResults() {
-    ['horseResultCard', 'baseResultCard', 'finalResultCard', 'detailCard'].forEach(id => {
+    ['baseResultCard', 'finalResultCard', 'detailCard'].forEach(id => {
         document.getElementById(id).classList.add('hidden');
     });
 }
 
-function loadDemo(type) {
-    resetAll();
-    if (type === 'self') {
-        document.getElementById('winType').value = 'self';
-        document.getElementById('selfWinner').value = '2';
-        document.getElementById('selfFan').value = '2';
-        kongs = [
-            { id: 1, type: 'direct', player: 0, from: 1 },
-            { id: 2, type: 'concealed', player: 2, from: 0 }
-        ];
-        selectedHorses = ['1万', '南', '5筒', '白'];
-        renderSelectedHorses();
-    } else {
-        document.getElementById('winType').value = 'discard';
-        document.getElementById('discardWinner').value = '0';
-        document.getElementById('discardLoser').value = '2';
-        document.getElementById('discardFan').value = '8';
-        kongs = [
-            { id: 1, type: 'added', player: 1, from: 0 },
-            { id: 2, type: 'direct', player: 3, from: 0 }
-        ];
-        selectedHorses = ['东', '3条', '中', '8筒'];
-        renderSelectedHorses();
-    }
-    renderKongs();
-    onWinTypeChange();
-    calculate();
-}
+
 
 // ==================== 计算逻辑 ====================
 
@@ -714,16 +671,6 @@ function calculate() {
 
     const baseSettle = calculateSettlement(baseTx, horseCounts, false);
     const finalSettle = calculateSettlement(baseTx, horseCounts, true);
-
-    // 渲染买马映射
-    if (horseDetails.length > 0) {
-        document.getElementById('horseResultCard').classList.remove('hidden');
-        document.getElementById('horseTags').innerHTML = horseDetails.map(h =>
-            `<span class="horse-tag">${h.display}（${h.number}）→ ${h.player}</span>`
-        ).join('');
-        document.getElementById('horseSummary').innerHTML =
-            `庄家 ${horseCounts[0]} 次；下家 ${horseCounts[1]} 次；对家 ${horseCounts[2]} 次；上家 ${horseCounts[3]} 次`;
-    }
 
     // 渲染基础结果
     document.getElementById('baseResultCard').classList.remove('hidden');
