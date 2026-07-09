@@ -758,7 +758,7 @@ function buildBaseTransactions() {
             if (i !== selfWinner) {
                 transactions.push({
                     payer: i, receiver: selfWinner, amount: fan,
-                    reason: `${PLAYERS[selfWinner]} 自摸 ${fan} 番，${PLAYERS[i]} 支付`
+                    reason: `自摸 ${fan} 番：${PLAYERS[selfWinner]} 赢，${PLAYERS[i]} 付 ${fan} 番`
                 });
             }
         }
@@ -771,7 +771,7 @@ function buildBaseTransactions() {
         const fan = discardFan;
         transactions.push({
             payer: discardLoser, receiver: discardWinner, amount: fan,
-            reason: `${PLAYERS[discardWinner]} 和牌，${PLAYERS[discardLoser]} 点炮 ${fan} 番`
+            reason: `点炮 ${fan} 番：${PLAYERS[discardWinner]} 和牌，${PLAYERS[discardLoser]} 点炮付 ${fan} 番`
         });
     }
     for (let k = 0; k < kongs.length; k++) {
@@ -779,17 +779,17 @@ function buildBaseTransactions() {
         const p = kong.player, f = kong.from;
         if (kong.type === 'direct') {
             if (p === f) { alert(`第 ${k+1} 个直杠：杠牌者和点杠者不能相同`); return null; }
-            transactions.push({ payer: f, receiver: p, amount: 2, reason: `${PLAYERS[p]} 直杠，${PLAYERS[f]} 点杠付 2 番` });
+            transactions.push({ payer: f, receiver: p, amount: 2, reason: `直杠：${PLAYERS[p]} 杠，${PLAYERS[f]} 作为点杠者付 2 番` });
             for (let i = 0; i < 4; i++) if (i !== p && i !== f) {
-                transactions.push({ payer: i, receiver: p, amount: 1, reason: `${PLAYERS[p]} 直杠，${PLAYERS[i]} 付 1 番` });
+                transactions.push({ payer: i, receiver: p, amount: 1, reason: `直杠：${PLAYERS[p]} 杠，${PLAYERS[i]} 作为其他玩家付 1 番` });
             }
         } else if (kong.type === 'added') {
             for (let i = 0; i < 4; i++) if (i !== p) {
-                transactions.push({ payer: i, receiver: p, amount: 1, reason: `${PLAYERS[p]} 加杠，${PLAYERS[i]} 付 1 番` });
+                transactions.push({ payer: i, receiver: p, amount: 1, reason: `加杠：${PLAYERS[p]} 加杠，${PLAYERS[i]} 付 1 番` });
             }
         } else if (kong.type === 'concealed') {
             for (let i = 0; i < 4; i++) if (i !== p) {
-                transactions.push({ payer: i, receiver: p, amount: 2, reason: `${PLAYERS[p]} 暗杠，${PLAYERS[i]} 付 2 番` });
+                transactions.push({ payer: i, receiver: p, amount: 2, reason: `暗杠：${PLAYERS[p]} 暗杠，${PLAYERS[i]} 付 2 番` });
             }
         }
     }
@@ -811,8 +811,8 @@ function calculateSettlement(baseTransactions, horseCounts, includeHorse) {
         if (includeHorse) {
             const rhc = horseCounts[tx.receiver] || 0;
             const phc = horseCounts[tx.payer] || 0;
-            if (rhc > 0) addPay(tx.payer, M_INDEX, tx.amount * rhc, `买马买中 ${PLAYERS[tx.receiver]} ${rhc} 次`);
-            if (phc > 0) addPay(M_INDEX, tx.receiver, tx.amount * phc, `买马买中 ${PLAYERS[tx.payer]} ${phc} 次`);
+            if (rhc > 0) addPay(tx.payer, M_INDEX, tx.amount * rhc, `买马：${tx.reason}；买马人买中 ${PLAYERS[tx.receiver]} ${rhc} 次，${PLAYERS[tx.payer]} 额外付 ${tx.amount * rhc} 番`);
+            if (phc > 0) addPay(M_INDEX, tx.receiver, tx.amount * phc, `买马：${tx.reason}；买马人买中 ${PLAYERS[tx.payer]} ${phc} 次，买马人额外付 ${tx.amount * phc} 番`);
         }
     }
     const rows = [];
