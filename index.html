@@ -576,12 +576,6 @@
             </div>
         </div>
 
-        <!-- 明细 -->
-        <div id="detailCard" class="card hidden">
-            <div class="card-title">结算明细</div>
-            <div id="detailList"></div>
-        </div>
-
         <!-- 筹码统计 -->
         <div class="card">
             <div class="card-title">剩余筹码</div>
@@ -878,14 +872,12 @@ function resetRound() {
     setWinType('none'); setSelfWinner(0); setSelfFan(1); setDiscardWinner(0); setDiscardLoser(1); setDiscardFan(4);
     renderKongs(); renderSelectedHorses();
     document.getElementById('finalResultCard').classList.add('hidden');
-    document.getElementById('detailCard').classList.add('hidden');
     document.getElementById('saveSection').classList.add('hidden');
     currentResult = null;
 }
 
 function hideResults() {
     document.getElementById('finalResultCard').classList.add('hidden');
-    document.getElementById('detailCard').classList.add('hidden');
 }
 
 // ==================== 计算逻辑 ====================
@@ -1040,9 +1032,6 @@ function calculate() {
     const total = chipChanges.reduce((s, c) => s + c, 0) + settle.rows[4].score;
     document.getElementById('totalScore').innerHTML = `合计：${total === 0 ? '0（总账平衡）' : total}`;
 
-    // 渲染明细
-    renderDetails(settle);
-
     // 显示保存选项
     document.getElementById('saveSection').classList.remove('hidden');
     // 默认下局座位：庄家顺时针轮换（下家变庄家）
@@ -1053,64 +1042,6 @@ function calculate() {
             `<option value="${idx}" ${nextSeat[i] === idx ? 'selected' : ''}>${name}</option>`
         ).join('');
     }
-}
-
-function renderDetails(settle) {
-    document.getElementById('detailCard').classList.remove('hidden');
-    const personDetails = {};
-    for (const name of [...SEATS, '买马人']) personDetails[name] = { income: [], expense: [] };
-    for (const d of settle.details) {
-        personDetails[d.receiver].income.push(d);
-        personDetails[d.payer].expense.push(d);
-    }
-    function mergeByCategory(items, isIncome) {
-        const groups = {};
-        for (const d of items) {
-            if (!groups[d.category]) groups[d.category] = [];
-            groups[d.category].push(d);
-        }
-        const result = [];
-        for (const cat of Object.keys(groups)) {
-            const list = groups[cat];
-            const total = list.reduce((s, d) => s + d.amount, 0);
-            const others = list.map(d => isIncome ? d.payer : d.receiver);
-            const uniqueOthers = [...new Set(others)];
-            const reasons = [...new Set(list.map(d => d.reason))];
-            result.push({ category: cat, total, others: uniqueOthers, reasons });
-        }
-        return result;
-    }
-    let detailHtml = '';
-    for (const row of settle.rows) {
-        const name = row.name;
-        const pd = personDetails[name];
-        const incomeTotal = pd.income.reduce((s, d) => s + d.amount, 0);
-        const expenseTotal = pd.expense.reduce((s, d) => s + d.amount, 0);
-        detailHtml += `<div class="person-section">
-            <div class="person-header">
-                <span class="person-name">${name}</span>
-                <span class="person-score ${row.scoreClass}">${row.scoreText}</span>
-                <span class="person-total">收 ${incomeTotal} / 支 ${expenseTotal}</span>
-            </div>`;
-        if (pd.income.length > 0) {
-            detailHtml += `<div class="person-subtitle">收入</div>`;
-            for (const g of mergeByCategory(pd.income, true)) {
-                detailHtml += `<div class="person-line"><span class="person-amount win">+${g.total}</span><span class="person-category">${g.category}</span></div>
-                <div class="merge-detail">来自：${g.others.join('、')}；共 ${g.others.length} 笔</div>
-                <div class="reason">${g.reasons.join('；')}</div>`;
-            }
-        }
-        if (pd.expense.length > 0) {
-            detailHtml += `<div class="person-subtitle">支出</div>`;
-            for (const g of mergeByCategory(pd.expense, false)) {
-                detailHtml += `<div class="person-line"><span class="person-amount lose">-${g.total}</span><span class="person-category">${g.category}</span></div>
-                <div class="merge-detail">付给：${g.others.join('、')}；共 ${g.others.length} 笔</div>
-                <div class="reason">${g.reasons.join('；')}</div>`;
-            }
-        }
-        detailHtml += `</div>`;
-    }
-    document.getElementById('detailList').innerHTML = detailHtml;
 }
 
 function saveRound() {
