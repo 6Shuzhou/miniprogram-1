@@ -590,6 +590,7 @@
                 <div class="btn-row">
                     <button class="btn btn-primary" onclick="saveGameConfig()">保存设置</button>
                     <button class="btn btn-secondary" onclick="resetGame()">重置对局</button>
+                    <button class="btn btn-danger" onclick="clearGameData()">清空数据</button>
                 </div>
             </div>
         </div>
@@ -707,6 +708,7 @@ function saveGameConfig() {
     renderConfigSummary();
     configExpanded = false;
     toggleConfigUI();
+    saveGameData();
     alert('设置已保存');
 }
 
@@ -717,6 +719,7 @@ function resetGame() {
     currentResult = null;
     renderChips();
     renderRecords();
+    saveGameData();
     resetRound();
 }
 
@@ -1123,6 +1126,7 @@ function saveRound() {
     renderSeatSelects();
     renderChips();
     renderRecords();
+    saveGameData();
     resetRound();
 }
 
@@ -1130,8 +1134,85 @@ function discardRound() {
     document.getElementById('saveSection').classList.add('hidden');
 }
 
+// ==================== 本地存储 ====================
+
+const STORAGE_KEY = 'majiang_calculator_data_v1';
+
+function saveGameData() {
+    try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({ gameConfig, gameState }));
+    } catch (e) {
+        console.warn('本地存储失败', e);
+    }
+}
+
+function loadGameData() {
+    try {
+        const data = localStorage.getItem(STORAGE_KEY);
+        if (!data) return false;
+        const parsed = JSON.parse(data);
+        if (parsed.gameConfig) {
+            gameConfig = parsed.gameConfig;
+            // 兼容旧数据：如果没有买马人，补一个空字符串
+            if (gameConfig.playerNames.length < 5) {
+                gameConfig.playerNames.push('');
+            }
+        }
+        if (parsed.gameState) {
+            gameState = parsed.gameState;
+            // 兼容旧数据：补齐5个元素
+            while (gameState.currentChips.length < 5) gameState.currentChips.push(gameConfig.startChips || 100);
+            while (gameState.totalRake.length < 5) gameState.totalRake.push(0);
+        }
+        return true;
+    } catch (e) {
+        console.warn('读取本地数据失败', e);
+        return false;
+    }
+}
+
+function clearGameData() {
+    if (!confirm('确定要清空所有对局数据和设置吗？')) return;
+    localStorage.removeItem(STORAGE_KEY);
+    gameConfig = {
+        playerNames: ['', '', '', '', ''],
+        startChips: 100,
+        rakePer: 10,
+        rakeCap: 100,
+        seatToPlayer: [0, 1, 2, 3]
+    };
+    gameState = {
+        currentChips: [100, 100, 100, 100, 100],
+        totalRake: [0, 0, 0, 0, 0],
+        records: []
+    };
+    configExpanded = true;
+    updateNameInputs();
+    renderSeatSelects();
+    renderChips();
+    renderRecords();
+    renderConfigSummary();
+    toggleConfigUI();
+    resetRound();
+}
+
+function updateNameInputs() {
+    for (let i = 0; i < 5; i++) {
+        const input = document.getElementById('name' + i);
+        if (input) input.value = gameConfig.playerNames[i] || '';
+    }
+    const startInput = document.getElementById('startChips');
+    if (startInput) startInput.value = gameConfig.startChips;
+    const rakePerInput = document.getElementById('rakePer');
+    if (rakePerInput) rakePerInput.value = gameConfig.rakePer;
+    const rakeCapInput = document.getElementById('rakeCap');
+    if (rakeCapInput) rakeCapInput.value = gameConfig.rakeCap;
+}
+
 // 初始化
 function init() {
+    const hasData = loadGameData();
+    updateNameInputs();
     renderSeatSelects();
     renderTileButtons();
     renderSelectedHorses();
@@ -1139,6 +1220,9 @@ function init() {
     renderChips();
     renderRecords();
     renderConfigSummary();
+    if (hasData) {
+        configExpanded = false;
+    }
     toggleConfigUI();
     setWinType('none');
     setSelfWinner(0);
