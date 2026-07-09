@@ -564,7 +564,7 @@
                         <div class="seat-box"><div class="seat-name">玩家2</div><input type="text" id="name1" placeholder="名字" style="width:100%;padding:6px;border:1px solid #ddd;border-radius:6px;font-size:13px;"></div>
                         <div class="seat-box"><div class="seat-name">玩家3</div><input type="text" id="name2" placeholder="名字" style="width:100%;padding:6px;border:1px solid #ddd;border-radius:6px;font-size:13px;"></div>
                         <div class="seat-box"><div class="seat-name">玩家4</div><input type="text" id="name3" placeholder="名字" style="width:100%;padding:6px;border:1px solid #ddd;border-radius:6px;font-size:13px;"></div>
-                        <div class="seat-box"><div class="seat-name" style="color:#c62828;">买马人</div><input type="text" id="name4" placeholder="名字" style="width:100%;padding:6px;border:1px solid #ddd;border-radius:6px;font-size:13px;"></div>
+                        <div class="seat-box"><div class="seat-name">玩家5</div><input type="text" id="name4" placeholder="名字" style="width:100%;padding:6px;border:1px solid #ddd;border-radius:6px;font-size:13px;"></div>
                     </div>
                 </div>
                 <div class="config-row">
@@ -661,7 +661,7 @@ let currentResult = null;
 function getSeatName(seatIdx) { return SEATS[seatIdx]; }
 function getPlayerNameBySeat(seatIdx) { return gameConfig.playerNames[gameConfig.seatToPlayer[seatIdx]]; }
 function getPlayerName(playerIdx) { return gameConfig.playerNames[playerIdx] || ('玩家' + (playerIdx + 1)); }
-function getHorsePlayerName() { return gameConfig.playerNames[4] || '买马人'; }
+function getHorsePlayerName() { return getPlayerName(4); }
 
 function renderSeatSelects() {
     for (let i = 0; i < 4; i++) {
@@ -750,10 +750,7 @@ function toggleConfigUI() {
 }
 
 function renderConfigSummary() {
-    const names = gameConfig.playerNames.map((n, i) => {
-        if (i === 4) return `<span style="color:#c62828;">${n || '买马人'}</span>`;
-        return n || ('玩家' + (i + 1));
-    }).join('、');
+    const names = gameConfig.playerNames.map((n, i) => n || ('玩家' + (i + 1))).join('、');
     document.getElementById('configSummary').innerHTML = `
         <div class="summary-item"><span class="summary-label">玩家</span><span class="summary-value">${names}</span></div>
         <div class="summary-item"><span class="summary-label">起始筹码</span><span class="summary-value">${gameConfig.startChips}</span></div>
@@ -764,12 +761,11 @@ function renderConfigSummary() {
 function renderChips() {
     const container = document.getElementById('chipsGrid');
     container.innerHTML = gameConfig.playerNames.map((rawName, i) => {
-        const name = rawName || (i === 4 ? '买马人' : '玩家' + (i + 1));
+        const name = rawName || ('玩家' + (i + 1));
         const chips = gameState.currentChips[i];
         const cls = chips > 0 ? 'win' : chips < 0 ? 'lose' : 'even';
-        const labelColor = i === 4 ? 'style="color:#c62828;"' : '';
         return `<div class="chip-card">
-            <div class="player-name" ${labelColor}>${name}</div>
+            <div class="player-name">${name}</div>
             <div class="chip-amount ${cls}">${chips}</div>
             <div class="chip-change">累计抽水 ${gameState.totalRake[i]}</div>
             <button class="btn btn-secondary" style="margin-top:8px;font-size:12px;padding:4px 10px;" onclick="adjustChips(${i})">调整</button>
@@ -822,11 +818,10 @@ function renderRecords() {
             </div>`;
         }
         const roundNum = gameState.records.length - idx;
-        const seatText = r.seatToPlayer.map((p, i) => `${SEATS[i]}:${getPlayerName(p)}`).join(' ') + ` 买马人:${r.horsePlayerName || getHorsePlayerName()}`;
+        const seatText = r.seatToPlayer.map((p, i) => `${SEATS[i]}:${getPlayerName(p)}`).join(' ') + ` 玩家5:${r.horsePlayerName || getHorsePlayerName()}`;
         const changes = r.chipChanges.map((c, i) => {
             const name = getPlayerName(i);
-            const color = i === 4 ? 'style="color:#c62828;"' : '';
-            return `<span ${color}>${name}: ${c > 0 ? '+' : ''}${c}</span>`;
+            return `<span>${name}: ${c > 0 ? '+' : ''}${c}</span>`;
         }).join('，');
         const rakes = r.rakes.map((rk, i) => rk > 0 ? `${getPlayerName(i)}-${rk}` : '').filter(Boolean).join('，');
         return `<div class="record-item">
@@ -1133,7 +1128,7 @@ function calculate() {
     }).join('');
     if (settle.rows[4].score !== 0) {
         resultHtml += `<tr>
-            <td colspan="2">买马人（${getHorsePlayerName()}）</td>
+            <td colspan="2">玩家5（${getPlayerName(4)}）</td>
             <td class="${settle.rows[4].scoreClass}">${settle.rows[4].scoreText}</td>
             <td>-</td>
             <td class="${settle.rows[4].scoreClass}">${chipChanges[4] > 0 ? '+' : ''}${chipChanges[4]}</td>
