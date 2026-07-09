@@ -772,14 +772,56 @@ function renderChips() {
             <div class="player-name" ${labelColor}>${name}</div>
             <div class="chip-amount ${cls}">${chips}</div>
             <div class="chip-change">累计抽水 ${gameState.totalRake[i]}</div>
+            <button class="btn btn-secondary" style="margin-top:8px;font-size:12px;padding:4px 10px;" onclick="adjustChips(${i})">调整</button>
         </div>`;
     }).join('');
+}
+
+function formatTime(date) {
+    const d = date || new Date();
+    const pad = n => n < 10 ? '0' + n : n;
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+function adjustChips(playerIdx) {
+    const name = getPlayerName(playerIdx);
+    const current = gameState.currentChips[playerIdx];
+    const newValueStr = prompt(`调整 ${name} 的筹码\n当前：${current}\n请输入新数值：`, current);
+    if (newValueStr === null) return;
+    const newValue = Number(newValueStr);
+    if (isNaN(newValue)) { alert('请输入有效数字'); return; }
+    const reason = prompt('请输入调整原因（可选）：') || '手动调整';
+    const before = current;
+    gameState.currentChips[playerIdx] = newValue;
+    gameState.records.push({
+        type: 'adjust',
+        time: formatTime(),
+        playerIdx,
+        before,
+        after: newValue,
+        reason
+    });
+    renderChips();
+    renderRecords();
+    saveGameData();
 }
 
 function renderRecords() {
     const container = document.getElementById('recordsList');
     if (gameState.records.length === 0) { container.innerHTML = '<div class="empty">暂无记录</div>'; return; }
-    container.innerHTML = gameState.records.map((r, idx) => {
+    container.innerHTML = gameState.records.slice().reverse().map((r, idx) => {
+        const timeStr = r.time ? `<span style="font-size:12px;color:#888;">${r.time}</span>` : '';
+        if (r.type === 'adjust') {
+            const diff = r.after - r.before;
+            const diffText = diff > 0 ? `+${diff}` : String(diff);
+            const cls = diff > 0 ? 'win' : diff < 0 ? 'lose' : 'even';
+            return `<div class="record-item" style="background:#fff8e1;border-radius:8px;padding:10px;margin-bottom:8px;">
+                <div class="record-title"><span style="color:#f57c00;">手动调整</span>${timeStr}</div>
+                <div class="record-changes">${getPlayerName(r.playerIdx)}: ${r.before} → ${r.after}（<span class="${cls}">${diffText}</span>）</div>
+                <div class="record-rake">原因：${r.reason}</div>
+            </div>`;
+        }
+        const roundNum = gameState.records.length - idx;
         const seatText = r.seatToPlayer.map((p, i) => `${SEATS[i]}:${getPlayerName(p)}`).join(' ') + ` 买马人:${r.horsePlayerName || getHorsePlayerName()}`;
         const changes = r.chipChanges.map((c, i) => {
             const name = getPlayerName(i);
@@ -788,11 +830,12 @@ function renderRecords() {
         }).join('，');
         const rakes = r.rakes.map((rk, i) => rk > 0 ? `${getPlayerName(i)}-${rk}` : '').filter(Boolean).join('，');
         return `<div class="record-item">
-            <div class="record-title"><span>第 ${idx + 1} 局</span><span style="font-size:12px;color:#888;">${seatText}</span></div>
+            <div class="record-title"><span>第 ${roundNum} 局</span>${timeStr}</div>
+            <div style="font-size:12px;color:#888;margin-bottom:6px;">${seatText}</div>
             <div class="record-changes">${changes}</div>
             ${rakes ? `<div class="record-rake">抽水：${rakes}</div>` : ''}
         </div>`;
-    }).reverse().join('');
+    }).join('');
 }
 
 // ==================== 本局状态 ====================
@@ -1127,6 +1170,8 @@ function saveRound() {
     }
     // 记录本局
     gameState.records.push({
+        type: 'round',
+        time: formatTime(),
         seatToPlayer: currentResult.seatToPlayer,
         nextSeatToPlayer,
         horsePlayerName: getHorsePlayerName(),
