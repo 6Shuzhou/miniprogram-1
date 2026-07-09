@@ -578,14 +578,8 @@
                     <span style="font-size:14px;color:#666;">个抽1个，上限</span>
                     <input type="number" id="rakeCap" value="100" min="0" style="flex:0.8;">
                 </div>
-                <div class="row">
-                    <span class="label">本局座位</span>
-                    <div class="seat-row" id="seatConfig">
-                        <div class="seat-box"><div class="seat-name">庄家</div><select id="seat0" onchange="updateSeat(0, this.value)"></select></div>
-                        <div class="seat-box"><div class="seat-name">庄的下家</div><select id="seat1" onchange="updateSeat(1, this.value)"></select></div>
-                        <div class="seat-box"><div class="seat-name">庄的对家</div><select id="seat2" onchange="updateSeat(2, this.value)"></select></div>
-                        <div class="seat-box"><div class="seat-name">庄的上家</div><select id="seat3" onchange="updateSeat(3, this.value)"></select></div>
-                    </div>
+                <div class="tip" id="configLockedTip" style="display:none;">
+                    已开始对局，只能修改玩家名字。如需修改起始筹码或抽水，请清空数据重新开始。
                 </div>
                 <div class="btn-row">
                     <button class="btn btn-primary" onclick="saveGameConfig()">保存设置</button>
@@ -692,24 +686,45 @@ function updateSeat(seatIdx, playerIdx) {
 }
 
 function saveGameConfig() {
+    const hasRecords = gameState.records.length > 0;
+    // 名字总是可以修改
     for (let i = 0; i < 5; i++) {
         const name = document.getElementById('name' + i).value.trim();
         gameConfig.playerNames[i] = name || ('玩家' + (i + 1));
     }
-    gameConfig.startChips = Number(document.getElementById('startChips').value) || 0;
-    gameConfig.rakePer = Number(document.getElementById('rakePer').value) || 1;
-    gameConfig.rakeCap = Number(document.getElementById('rakeCap').value) || 0;
-    // 重置筹码为新的起始筹码
-    gameState.currentChips = gameConfig.playerNames.map(() => gameConfig.startChips);
-    gameState.totalRake = [0, 0, 0, 0, 0];
+    // 只有未开始对局时才能修改起始筹码和抽水
+    if (!hasRecords) {
+        gameConfig.startChips = Number(document.getElementById('startChips').value) || 0;
+        gameConfig.rakePer = Number(document.getElementById('rakePer').value) || 1;
+        gameConfig.rakeCap = Number(document.getElementById('rakeCap').value) || 0;
+        // 重置筹码为新的起始筹码
+        gameState.currentChips = gameConfig.playerNames.map(() => gameConfig.startChips);
+        gameState.totalRake = [0, 0, 0, 0, 0];
+    }
     renderSeatSelects();
     renderChips();
     renderRecords();
     renderConfigSummary();
+    updateConfigFormLockState();
     configExpanded = false;
     toggleConfigUI();
     saveGameData();
     alert('设置已保存');
+}
+
+function updateConfigFormLockState() {
+    const hasRecords = gameState.records.length > 0;
+    const lockedIds = ['startChips', 'rakePer', 'rakeCap'];
+    for (const id of lockedIds) {
+        const el = document.getElementById(id);
+        if (el) {
+            el.disabled = hasRecords;
+            el.style.background = hasRecords ? '#f0f0f0' : '';
+            el.style.color = hasRecords ? '#888' : '';
+        }
+    }
+    const tip = document.getElementById('configLockedTip');
+    if (tip) tip.style.display = hasRecords ? 'block' : 'none';
 }
 
 function resetGame() {
@@ -739,10 +754,8 @@ function renderConfigSummary() {
         if (i === 4) return `<span style="color:#c62828;">${n || '买马人'}</span>`;
         return n || ('玩家' + (i + 1));
     }).join('、');
-    const seatText = gameConfig.seatToPlayer.map((p, i) => `${SEATS[i]}:${gameConfig.playerNames[p] || ('玩家' + (p + 1))}`).join(' ');
     document.getElementById('configSummary').innerHTML = `
         <div class="summary-item"><span class="summary-label">玩家</span><span class="summary-value">${names}</span></div>
-        <div class="summary-item"><span class="summary-label">本局座位</span><span class="summary-value">${seatText}</span></div>
         <div class="summary-item"><span class="summary-label">起始筹码</span><span class="summary-value">${gameConfig.startChips}</span></div>
         <div class="summary-item"><span class="summary-label">抽水</span><span class="summary-value">每进 ${gameConfig.rakePer} 抽 1，上限 ${gameConfig.rakeCap}</span></div>
     `;
@@ -1207,6 +1220,7 @@ function updateNameInputs() {
     if (rakePerInput) rakePerInput.value = gameConfig.rakePer;
     const rakeCapInput = document.getElementById('rakeCap');
     if (rakeCapInput) rakeCapInput.value = gameConfig.rakeCap;
+    updateConfigFormLockState();
 }
 
 // 初始化
