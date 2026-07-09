@@ -205,6 +205,58 @@
         .transaction:last-child { border-bottom: none; }
         .reason { font-size: 12px; color: #888; margin-top: 3px; }
         .total { font-weight: 700; font-size: 16px; margin-top: 12px; padding-top: 10px; border-top: 2px solid #ddd; }
+
+        /* 按人分类的明细 */
+        .person-section {
+            border: 1px solid #e8e8e8;
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 12px;
+            background: #fafafa;
+        }
+        .person-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #eee;
+        }
+        .person-name {
+            font-weight: 700;
+            font-size: 15px;
+        }
+        .person-score {
+            font-weight: 700;
+        }
+        .person-total {
+            margin-left: auto;
+            font-size: 13px;
+            color: #666;
+        }
+        .person-subtitle {
+            font-size: 12px;
+            color: #999;
+            margin: 8px 0 4px 0;
+            font-weight: 600;
+        }
+        .person-line {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 5px 0;
+            font-size: 14px;
+            flex-wrap: wrap;
+        }
+        .person-amount {
+            font-weight: 700;
+            min-width: 45px;
+        }
+        .person-line .reason {
+            width: 100%;
+            margin-top: 0;
+            margin-left: 53px;
+        }
         .hidden { display: none; }
 
         /* 麻将牌按钮 */
@@ -791,15 +843,52 @@ function calculate() {
     const total = finalSettle.rows.reduce((s, r) => s + r.score, 0);
     document.getElementById('totalScore').innerHTML = `合计：${total === 0 ? '0（总账平衡）' : total}`;
 
-    // 渲染明细
+    // 渲染明细（按人分类）
     if (finalSettle.details.length > 0) {
         document.getElementById('detailCard').classList.remove('hidden');
-        document.getElementById('detailList').innerHTML = finalSettle.details.map(d =>
-            `<div class="transaction">
-                <div><strong>${d.payer}</strong> → <strong>${d.receiver}</strong>：${d.amount} 番</div>
-                <div class="reason">${d.reason}</div>
-            </div>`
-        ).join('');
+        const personDetails = {};
+        for (const name of ALL_PLAYERS) {
+            personDetails[name] = { income: [], expense: [] };
+        }
+        for (const d of finalSettle.details) {
+            personDetails[d.receiver].income.push(d);
+            personDetails[d.payer].expense.push(d);
+        }
+        let detailHtml = '';
+        for (const row of finalSettle.rows) {
+            const name = row.name;
+            const pd = personDetails[name];
+            const incomeTotal = pd.income.reduce((s, d) => s + d.amount, 0);
+            const expenseTotal = pd.expense.reduce((s, d) => s + d.amount, 0);
+            detailHtml += `<div class="person-section">
+                <div class="person-header">
+                    <span class="person-name">${name}</span>
+                    <span class="person-score ${row.scoreClass}">${row.scoreText}</span>
+                    <span class="person-total">收 ${incomeTotal} / 支 ${expenseTotal}</span>
+                </div>`;
+            if (pd.income.length > 0) {
+                detailHtml += `<div class="person-subtitle">收入</div>`;
+                for (const d of pd.income) {
+                    detailHtml += `<div class="person-line">
+                        <span class="person-amount win">+${d.amount}</span>
+                        <span>来自 ${d.payer}</span>
+                        <span class="reason">${d.reason}</span>
+                    </div>`;
+                }
+            }
+            if (pd.expense.length > 0) {
+                detailHtml += `<div class="person-subtitle">支出</div>`;
+                for (const d of pd.expense) {
+                    detailHtml += `<div class="person-line">
+                        <span class="person-amount lose">-${d.amount}</span>
+                        <span>付给 ${d.receiver}</span>
+                        <span class="reason">${d.reason}</span>
+                    </div>`;
+                }
+            }
+            detailHtml += `</div>`;
+        }
+        document.getElementById('detailList').innerHTML = detailHtml;
     }
 }
 
