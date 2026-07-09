@@ -60,6 +60,20 @@
             font-size: 14px;
             margin-bottom: 8px;
         }
+        select, input[type="text"] {
+            flex: 1;
+            min-width: 140px;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 15px;
+            background: #fafafa;
+            outline: none;
+        }
+        select:focus, input[type="text"]:focus {
+            border-color: #07c160;
+            background: white;
+        }
         .btn {
             display: inline-block;
             padding: 8px 16px;
@@ -101,8 +115,12 @@
             gap: 8px;
             width: 100%;
         }
-        .btn-group.three-cols { grid-template-columns: repeat(3, 1fr); }
-        .btn-group.two-cols { grid-template-columns: repeat(2, 1fr); }
+        .btn-group.three-cols {
+            grid-template-columns: repeat(3, 1fr);
+        }
+        .btn-group.two-cols {
+            grid-template-columns: repeat(2, 1fr);
+        }
         .btn-group .btn {
             padding: 10px 4px;
             min-height: 44px;
@@ -136,7 +154,6 @@
             cursor: not-allowed;
             opacity: 0.6;
         }
-
         .kong-card {
             background: #fafafa;
             border: 1px solid #e8e8e8;
@@ -182,7 +199,14 @@
         .win { color: #07c160; font-weight: 700; }
         .lose { color: #c62828; font-weight: 700; }
         .even { color: #666; font-weight: 600; }
-
+        .horse-tag {
+            display: inline-block;
+            padding: 4px 10px;
+            margin: 4px 6px 4px 0;
+            background: #e8f5e9;
+            border-radius: 6px;
+            font-size: 13px;
+        }
         .transaction {
             padding: 10px 0;
             border-bottom: 1px solid #eee;
@@ -191,6 +215,58 @@
         .transaction:last-child { border-bottom: none; }
         .reason { font-size: 12px; color: #888; margin-top: 3px; }
         .total { font-weight: 700; font-size: 16px; margin-top: 12px; padding-top: 10px; border-top: 2px solid #ddd; }
+
+        /* 按人分类的明细 */
+        .person-section {
+            border: 1px solid #e8e8e8;
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 12px;
+            background: #fafafa;
+        }
+        .person-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #eee;
+        }
+        .person-name {
+            font-weight: 700;
+            font-size: 15px;
+        }
+        .person-score {
+            font-weight: 700;
+        }
+        .person-total {
+            margin-left: auto;
+            font-size: 13px;
+            color: #666;
+        }
+        .person-subtitle {
+            font-size: 12px;
+            color: #999;
+            margin: 8px 0 4px 0;
+            font-weight: 600;
+        }
+        .person-line {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 5px 0;
+            font-size: 14px;
+            flex-wrap: wrap;
+        }
+        .person-amount {
+            font-weight: 700;
+            min-width: 45px;
+        }
+        .person-line .reason {
+            width: 100%;
+            margin-top: 0;
+            margin-left: 53px;
+        }
         .hidden { display: none; }
 
         /* 麻将牌按钮 */
@@ -222,8 +298,17 @@
             transform: scale(0.95);
             border-color: #07c160;
         }
+        .tile-btn .tile-num {
+            font-size: 10px;
+            color: #999;
+            margin-top: 2px;
+        }
         .tile-btn.wind { color: #1976d2; }
         .tile-btn.dragon { color: #c62828; }
+        .tile-btn.suit-w { color: #1565c0; }
+        .tile-btn.suit-t { color: #388e3c; }
+        .tile-btn.suit-b { color: #e65100; }
+
         .selected-horses {
             display: flex;
             flex-wrap: wrap;
@@ -259,6 +344,7 @@
             font-weight: 700;
             font-size: 12px;
         }
+
         .tile-section-title {
             font-size: 13px;
             color: #888;
@@ -266,143 +352,11 @@
             margin-bottom: 4px;
         }
 
-        /* 对局设置 */
-        .config-summary {
-            background: #f8f8f8;
-            border-radius: 10px;
-            padding: 14px;
-            font-size: 14px;
-            line-height: 1.8;
-            color: #555;
-        }
-        .config-summary .summary-item {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 6px;
-        }
-        .config-summary .summary-item:last-child {
-            margin-bottom: 0;
-        }
-        .config-summary .summary-label {
-            color: #888;
-        }
-        .config-summary .summary-value {
-            font-weight: 600;
-            color: #333;
-        }
-        .config-row {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 10px;
-            align-items: center;
-        }
-        .config-row .label { width: 80px; margin-bottom: 0; }
-        .config-row input {
-            flex: 1;
-            padding: 10px 12px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 15px;
-            outline: none;
-        }
-        .config-row input:focus { border-color: #07c160; }
-        .seat-row {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
-            margin-top: 8px;
-        }
-        .seat-box {
-            background: #f8f8f8;
-            border: 1px solid #e8e8e8;
-            border-radius: 8px;
-            padding: 10px 6px;
-            text-align: center;
-            font-size: 13px;
-        }
-        .seat-box .seat-name {
-            color: #888;
-            font-size: 12px;
-            margin-bottom: 4px;
-        }
-        .seat-box .seat-player {
-            font-weight: 600;
-            color: #333;
-        }
-        .seat-box select {
-            width: 100%;
-            padding: 6px 4px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            font-size: 13px;
-            background: white;
-        }
-
-        /* 筹码显示 */
-        .chips-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            margin-top: 10px;
-        }
-        .chip-card {
-            background: #f8f8f8;
-            border-radius: 10px;
-            padding: 12px;
-            text-align: center;
-        }
-        .chip-card .player-name {
-            font-size: 13px;
-            color: #666;
-            margin-bottom: 6px;
-        }
-        .chip-card .chip-amount {
-            font-size: 22px;
-            font-weight: 700;
-        }
-        .chip-card .chip-change {
-            font-size: 12px;
-            margin-top: 4px;
-        }
-
-        /* 历史记录 */
-        .record-item {
-            border-bottom: 1px solid #eee;
-            padding: 12px 0;
-            font-size: 14px;
-        }
-        .record-item:last-child { border-bottom: none; }
-        .record-title {
-            font-weight: 600;
-            margin-bottom: 6px;
-            display: flex;
-            justify-content: space-between;
-        }
-        .record-changes {
-            color: #555;
-            font-size: 13px;
-            line-height: 1.6;
-        }
-        .record-rake {
-            color: #888;
-            font-size: 12px;
-            margin-top: 4px;
-        }
-
-        /* 保存对局 */
-        .save-section {
-            background: #e8f5e9;
-            border-radius: 10px;
-            padding: 14px;
-            margin-top: 12px;
-        }
-
         @media (max-width: 400px) {
             .btn-group { gap: 6px; }
             .btn-group .btn { font-size: 13px; padding: 8px 2px; min-height: 40px; }
             .tile-grid { gap: 5px; }
             .tile-btn { font-size: 15px; }
-            .chips-grid { grid-template-columns: repeat(2, 1fr); }
         }
     </style>
 </head>
@@ -410,6 +364,9 @@
     <div class="header">
         <h1>地方麻将计算器</h1>
         <p>支持自摸、点炮、杠牌、买马结算</p>
+        <div style="margin-top: 12px;">
+            <a href="full.html" style="color: #fff; text-decoration: underline; font-size: 14px;">切换到完整版（含抽水、对局记录）</a>
+        </div>
     </div>
 
     <div class="container">
@@ -507,7 +464,7 @@
         <div class="card">
             <div class="btn-row">
                 <button class="btn btn-primary" onclick="calculate()" style="flex:1;font-size:16px;padding:12px;">🀄 计算结果</button>
-                <button class="btn btn-secondary" onclick="resetRound()">重置本局</button>
+                <button class="btn btn-secondary" onclick="resetAll()">重置</button>
             </div>
         </div>
 
@@ -515,86 +472,26 @@
         <div id="finalResultCard" class="card hidden">
             <div class="card-title">最终结果</div>
             <table class="result-table">
-                <thead><tr><th>座位</th><th>玩家</th><th>番数变化</th><th>抽水</th><th>筹码变化</th></tr></thead>
+                <thead><tr><th>玩家</th><th>收入</th><th>支出</th><th>净盈亏</th></tr></thead>
                 <tbody id="finalResultBody"></tbody>
             </table>
             <div id="totalScore" class="total"></div>
-            <div class="save-section hidden" id="saveSection">
-                <div style="font-weight:600;margin-bottom:10px;">保存本局</div>
-                <div class="row" style="margin-bottom:10px;">
-                    <span class="label">下局座位（自动轮换）</span>
-                    <div class="seat-row" id="nextSeatConfig">
-                        <div class="seat-box"><div class="seat-name">庄家</div><select id="nextSeat0"></select></div>
-                        <div class="seat-box"><div class="seat-name">庄的下家</div><select id="nextSeat1"></select></div>
-                        <div class="seat-box"><div class="seat-name">庄的对家</div><select id="nextSeat2"></select></div>
-                        <div class="seat-box"><div class="seat-name">庄的上家</div><select id="nextSeat3"></select></div>
-                    </div>
-                </div>
-                <div class="btn-row">
-                    <button class="btn btn-primary" onclick="saveRound()" style="flex:1;">保存本局并继续</button>
-                    <button class="btn btn-secondary" onclick="discardRound()">不保存</button>
-                </div>
-            </div>
         </div>
 
-        <!-- 筹码统计 -->
-        <div class="card">
-            <div class="card-title">剩余筹码</div>
-            <div class="chips-grid" id="chipsGrid"></div>
-        </div>
-
-        <!-- 历史记录 -->
-        <div class="card">
-            <div class="card-title">对局记录</div>
-            <div id="recordsList"><div class="empty">暂无记录</div></div>
-        </div>
-
-        <!-- 对局设置 -->
-        <div class="card">
-            <div class="card-title" style="justify-content:space-between;">
-                <span>对局设置</span>
-                <button class="btn btn-secondary" style="margin:0;padding:6px 12px;font-size:13px;" onclick="toggleConfig()" id="toggleConfigBtn">展开</button>
-            </div>
-            <div id="configSummary" class="config-summary"></div>
-            <div id="configForm" class="hidden">
-                <div class="row">
-                    <span class="label">玩家名字</span>
-                    <div class="seat-row" id="nameInputs">
-                        <div class="seat-box"><div class="seat-name">玩家1</div><input type="text" id="name0" placeholder="名字" style="width:100%;padding:6px;border:1px solid #ddd;border-radius:6px;font-size:13px;"></div>
-                        <div class="seat-box"><div class="seat-name">玩家2</div><input type="text" id="name1" placeholder="名字" style="width:100%;padding:6px;border:1px solid #ddd;border-radius:6px;font-size:13px;"></div>
-                        <div class="seat-box"><div class="seat-name">玩家3</div><input type="text" id="name2" placeholder="名字" style="width:100%;padding:6px;border:1px solid #ddd;border-radius:6px;font-size:13px;"></div>
-                        <div class="seat-box"><div class="seat-name">玩家4</div><input type="text" id="name3" placeholder="名字" style="width:100%;padding:6px;border:1px solid #ddd;border-radius:6px;font-size:13px;"></div>
-                        <div class="seat-box"><div class="seat-name">玩家5</div><input type="text" id="name4" placeholder="名字" style="width:100%;padding:6px;border:1px solid #ddd;border-radius:6px;font-size:13px;"></div>
-                    </div>
-                </div>
-                <div class="config-row">
-                    <span class="label">起始筹码</span>
-                    <input type="number" id="startChips" value="100" min="0">
-                </div>
-                <div class="config-row">
-                    <span class="label">抽水</span>
-                    <span style="font-size:14px;color:#666;">每进</span>
-                    <input type="number" id="rakePer" value="10" min="1" style="flex:0.8;">
-                    <span style="font-size:14px;color:#666;">个抽1个，上限</span>
-                    <input type="number" id="rakeCap" value="100" min="0" style="flex:0.8;">
-                </div>
-                <div class="tip" id="configLockedTip" style="display:none;">
-                    已开始对局，只能修改玩家名字。如需修改起始筹码或抽水，请清空数据重新开始。
-                </div>
-                <div class="btn-row">
-                    <button class="btn btn-primary" onclick="saveGameConfig()">保存设置</button>
-                    <button class="btn btn-secondary" onclick="resetGame()">重置对局</button>
-                    <button class="btn btn-danger" onclick="clearGameData()">清空数据</button>
-                </div>
-            </div>
+        <!-- 明细 -->
+        <div id="detailCard" class="card hidden">
+            <div class="card-title">结算明细</div>
+            <div id="detailList"></div>
         </div>
     </div>
 
 <script>
 // ==================== 核心引擎 ====================
 
-const SEATS = ['庄家', '庄的下家', '庄的对家', '庄的上家'];
+const PLAYERS = ['庄家', '庄的下家', '庄的对家', '庄的上家'];
+const ALL_PLAYERS = ['庄家', '庄的下家', '庄的对家', '庄的上家', '买马人'];
 const M_INDEX = 4;
+
 const KONG_TYPES = { direct: '直杠', added: '加杠', concealed: '暗杠' };
 
 const WIND_MAP = { '东': 1, '南': 2, '西': 3, '北': 4 };
@@ -638,205 +535,70 @@ function parseHorseInput(input) {
     return { ok: true, tiles };
 }
 
-// ==================== 对局状态 ====================
-
-let gameConfig = {
-    playerNames: ['', '', '', '', ''],
-    startChips: 100,
-    rakePer: 10,
-    rakeCap: 100,
-    seatToPlayer: [0, 1, 2, 3] // 座位 -> 玩家索引
-};
-
-let gameState = {
-    currentChips: [100, 100, 100, 100, 100],
-    totalRake: [0, 0, 0, 0, 0],
-    records: []
-};
-
-let configExpanded = true; // 默认展开，保存后折叠
-
-let currentResult = null;
-
-function getSeatName(seatIdx) { return SEATS[seatIdx]; }
-function getPlayerNameBySeat(seatIdx) { return gameConfig.playerNames[gameConfig.seatToPlayer[seatIdx]]; }
-function getPlayerName(playerIdx) { return gameConfig.playerNames[playerIdx] || ('玩家' + (playerIdx + 1)); }
-function getHorsePlayerName() { return getPlayerName(4); }
-
-function renderSeatSelects() {
-    for (let i = 0; i < 4; i++) {
-        const select = document.getElementById('seat' + i);
-        const nextSelect = document.getElementById('nextSeat' + i);
-        if (select) {
-            select.innerHTML = gameConfig.playerNames.map((name, idx) =>
-                `<option value="${idx}" ${gameConfig.seatToPlayer[i] === idx ? 'selected' : ''}>${name}</option>`
-            ).join('');
-        }
-        if (nextSelect) {
-            nextSelect.innerHTML = gameConfig.playerNames.map((name, idx) =>
-                `<option value="${idx}" ${gameConfig.seatToPlayer[i] === idx ? 'selected' : ''}>${name}</option>`
-            ).join('');
-        }
-    }
-}
-
-function updateSeat(seatIdx, playerIdx) {
-    gameConfig.seatToPlayer[seatIdx] = Number(playerIdx);
-    renderSeatSelects();
-}
-
-function saveGameConfig() {
-    const hasRecords = gameState.records.length > 0;
-    // 名字总是可以修改
-    for (let i = 0; i < 5; i++) {
-        const name = document.getElementById('name' + i).value.trim();
-        gameConfig.playerNames[i] = name || ('玩家' + (i + 1));
-    }
-    // 只有未开始对局时才能修改起始筹码和抽水
-    if (!hasRecords) {
-        gameConfig.startChips = Number(document.getElementById('startChips').value) || 0;
-        gameConfig.rakePer = Number(document.getElementById('rakePer').value) || 1;
-        gameConfig.rakeCap = Number(document.getElementById('rakeCap').value) || 0;
-        // 重置筹码为新的起始筹码
-        gameState.currentChips = gameConfig.playerNames.map(() => gameConfig.startChips);
-        gameState.totalRake = [0, 0, 0, 0, 0];
-    }
-    renderSeatSelects();
-    renderChips();
-    renderRecords();
-    renderConfigSummary();
-    updateConfigFormLockState();
-    configExpanded = false;
-    toggleConfigUI();
-    saveGameData();
-    alert('设置已保存');
-}
-
-function updateConfigFormLockState() {
-    const hasRecords = gameState.records.length > 0;
-    const lockedIds = ['startChips', 'rakePer', 'rakeCap'];
-    for (const id of lockedIds) {
-        const el = document.getElementById(id);
-        if (el) {
-            el.disabled = hasRecords;
-            el.style.background = hasRecords ? '#f0f0f0' : '';
-            el.style.color = hasRecords ? '#888' : '';
-        }
-    }
-    const tip = document.getElementById('configLockedTip');
-    if (tip) tip.style.display = hasRecords ? 'block' : 'none';
-}
-
-function resetGame() {
-    gameState.currentChips = gameConfig.playerNames.map(() => gameConfig.startChips);
-    gameState.totalRake = [0, 0, 0, 0, 0];
-    gameState.records = [];
-    currentResult = null;
-    renderChips();
-    renderRecords();
-    saveGameData();
-    resetRound();
-}
-
-function toggleConfig() {
-    configExpanded = !configExpanded;
-    toggleConfigUI();
-}
-
-function toggleConfigUI() {
-    document.getElementById('configForm').classList.toggle('hidden', !configExpanded);
-    document.getElementById('configSummary').classList.toggle('hidden', configExpanded);
-    document.getElementById('toggleConfigBtn').innerText = configExpanded ? '收起' : '修改设置';
-}
-
-function renderConfigSummary() {
-    const names = gameConfig.playerNames.map((n, i) => n || ('玩家' + (i + 1))).join('、');
-    document.getElementById('configSummary').innerHTML = `
-        <div class="summary-item"><span class="summary-label">玩家</span><span class="summary-value">${names}</span></div>
-        <div class="summary-item"><span class="summary-label">起始筹码</span><span class="summary-value">${gameConfig.startChips}</span></div>
-        <div class="summary-item"><span class="summary-label">抽水</span><span class="summary-value">每进 ${gameConfig.rakePer} 抽 1，上限 ${gameConfig.rakeCap}</span></div>
-    `;
-}
-
-function renderChips() {
-    const container = document.getElementById('chipsGrid');
-    container.innerHTML = gameConfig.playerNames.map((rawName, i) => {
-        const name = rawName || ('玩家' + (i + 1));
-        const chips = gameState.currentChips[i];
-        const cls = chips > 0 ? 'win' : chips < 0 ? 'lose' : 'even';
-        return `<div class="chip-card">
-            <div class="player-name">${name}</div>
-            <div class="chip-amount ${cls}">${chips}</div>
-            <div class="chip-change">累计抽水 ${gameState.totalRake[i]}</div>
-            <button class="btn btn-secondary" style="margin-top:8px;font-size:12px;padding:4px 10px;" onclick="adjustChips(${i})">调整</button>
-        </div>`;
-    }).join('');
-}
-
-function formatTime(date) {
-    const d = date || new Date();
-    const pad = n => n < 10 ? '0' + n : n;
-    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
-}
-
-function adjustChips(playerIdx) {
-    const name = getPlayerName(playerIdx);
-    const current = gameState.currentChips[playerIdx];
-    const newValueStr = prompt(`调整 ${name} 的筹码\n当前：${current}\n请输入新数值：`, current);
-    if (newValueStr === null) return;
-    const newValue = Number(newValueStr);
-    if (isNaN(newValue)) { alert('请输入有效数字'); return; }
-    const reason = prompt('请输入调整原因（可选）：') || '手动调整';
-    const before = current;
-    gameState.currentChips[playerIdx] = newValue;
-    gameState.records.push({
-        type: 'adjust',
-        time: formatTime(),
-        playerIdx,
-        before,
-        after: newValue,
-        reason
-    });
-    renderChips();
-    renderRecords();
-    saveGameData();
-}
-
-function renderRecords() {
-    const container = document.getElementById('recordsList');
-    if (gameState.records.length === 0) { container.innerHTML = '<div class="empty">暂无记录</div>'; return; }
-    container.innerHTML = gameState.records.slice().reverse().map((r, idx) => {
-        const timeStr = r.time ? `<span style="font-size:12px;color:#888;">${r.time}</span>` : '';
-        if (r.type === 'adjust') {
-            const diff = r.after - r.before;
-            const diffText = diff > 0 ? `+${diff}` : String(diff);
-            const cls = diff > 0 ? 'win' : diff < 0 ? 'lose' : 'even';
-            return `<div class="record-item" style="background:#fff8e1;border-radius:8px;padding:10px;margin-bottom:8px;">
-                <div class="record-title"><span style="color:#f57c00;">手动调整</span>${timeStr}</div>
-                <div class="record-changes">${getPlayerName(r.playerIdx)}: ${r.before} → ${r.after}（<span class="${cls}">${diffText}</span>）</div>
-                <div class="record-rake">原因：${r.reason}</div>
-            </div>`;
-        }
-        const roundNum = gameState.records.length - idx;
-        const seatText = r.seatToPlayer.map((p, i) => `${SEATS[i]}:${getPlayerName(p)}`).join(' ') + ` 玩家5:${r.horsePlayerName || getHorsePlayerName()}`;
-        const changes = r.chipChanges.map((c, i) => {
-            const name = getPlayerName(i);
-            return `<span>${name}: ${c > 0 ? '+' : ''}${c}</span>`;
-        }).join('，');
-        const rakes = r.rakes.map((rk, i) => rk > 0 ? `${getPlayerName(i)}-${rk}` : '').filter(Boolean).join('，');
-        return `<div class="record-item">
-            <div class="record-title"><span>第 ${roundNum} 局</span>${timeStr}</div>
-            <div style="font-size:12px;color:#888;margin-bottom:6px;">${seatText}</div>
-            <div class="record-changes">${changes}</div>
-            ${rakes ? `<div class="record-rake">抽水：${rakes}</div>` : ''}
-        </div>`;
-    }).join('');
-}
-
-// ==================== 本局状态 ====================
+// ==================== 界面逻辑 ====================
 
 let kongs = [];
 let selectedHorses = [];
+
+function renderTileButtons() {
+    const numberContainer = document.getElementById('numberTiles');
+    let numberHtml = '';
+    for (let n = 1; n <= 9; n++) {
+        numberHtml += `<div class="tile-btn" onclick="addHorse('${n}')">
+            <div style="font-size:22px">${n}</div>
+        </div>`;
+    }
+    numberContainer.innerHTML = numberHtml;
+
+    const wordContainer = document.getElementById('wordTiles');
+    const words = [
+        { t: '东', n: 1, cls: 'wind' },
+        { t: '南', n: 2, cls: 'wind' },
+        { t: '西', n: 3, cls: 'wind' },
+        { t: '北', n: 4, cls: 'wind' },
+        { t: '中', n: 1, cls: 'dragon' },
+        { t: '发', n: 2, cls: 'dragon' },
+        { t: '白', n: 3, cls: 'dragon' }
+    ];
+    wordContainer.innerHTML = words.map(w =>
+        `<div class="tile-btn ${w.cls}" onclick="addHorse('${w.t}')">
+            <div>${w.t}</div>
+            <div class="tile-num">${w.n}</div>
+        </div>`
+    ).join('');
+}
+
+function addHorse(tileStr) {
+    selectedHorses.push(tileStr);
+    renderSelectedHorses();
+}
+
+function removeHorse(index) {
+    selectedHorses.splice(index, 1);
+    renderSelectedHorses();
+}
+
+function onHorseChipClick(e) {
+    const chip = e.target.closest('.horse-chip');
+    if (!chip) return;
+    const idx = Number(chip.dataset.index);
+    if (!isNaN(idx)) removeHorse(idx);
+}
+
+function renderSelectedHorses() {
+    const container = document.getElementById('selectedHorses');
+    if (selectedHorses.length === 0) {
+        container.innerHTML = '<span class="empty-hint">尚未选择马牌，点击下方牌面添加</span>';
+        return;
+    }
+    container.innerHTML = selectedHorses.map((h, i) => {
+        const parsed = parseTile(h);
+        const label = parsed ? `${parsed.display}(${parsed.number})` : h;
+        return `<span class="horse-chip" data-index="${i}">${label}<span class="chip-x">✕</span></span>`;
+    }).join('');
+}
+
+// 当前选择状态
 let winType = 'none';
 let selfWinner = 0;
 let selfFan = 1;
@@ -859,29 +621,47 @@ function setWinType(type) {
     document.getElementById('discardSection').classList.toggle('hidden', type !== 'discard');
 }
 
-function setSelfWinner(v) { selfWinner = v; setActiveButton('selfWinnerGroup', v); }
-function setSelfFan(v) { selfFan = v; setActiveButton('selfFanGroup', v); }
+function setSelfWinner(v) {
+    selfWinner = v;
+    setActiveButton('selfWinnerGroup', v);
+}
+
+function setSelfFan(v) {
+    selfFan = v;
+    setActiveButton('selfFanGroup', v);
+}
+
 function setDiscardWinner(v) {
     discardWinner = v;
     setActiveButton('discardWinnerGroup', v);
     updateDiscardButtons();
 }
+
 function setDiscardLoser(v) {
     discardLoser = v;
     setActiveButton('discardLoserGroup', v);
     updateDiscardButtons();
 }
-function setDiscardFan(v) { discardFan = v; setActiveButton('discardFanGroup', v); }
+
+function setDiscardFan(v) {
+    discardFan = v;
+    setActiveButton('discardFanGroup', v);
+}
 
 function updateDiscardButtons() {
     const winnerGroup = document.getElementById('discardWinnerGroup');
     const loserGroup = document.getElementById('discardLoserGroup');
     if (winnerGroup) {
-        Array.from(winnerGroup.children).forEach(btn => { btn.disabled = Number(btn.dataset.value) === discardLoser; });
+        Array.from(winnerGroup.children).forEach(btn => {
+            btn.disabled = Number(btn.dataset.value) === discardLoser;
+        });
     }
     if (loserGroup) {
-        Array.from(loserGroup.children).forEach(btn => { btn.disabled = Number(btn.dataset.value) === discardWinner; });
+        Array.from(loserGroup.children).forEach(btn => {
+            btn.disabled = Number(btn.dataset.value) === discardWinner;
+        });
     }
+    // 如果当前选中项被禁用，自动切换
     if (discardWinner === discardLoser) {
         for (let i = 0; i < 4; i++) {
             if (i !== discardLoser) { discardWinner = i; setActiveButton('discardWinnerGroup', i); break; }
@@ -901,14 +681,14 @@ function renderKongs() {
             <div class="row">
                 <span class="label">杠牌者</span>
                 <div class="btn-group">
-                    ${SEATS.map((p, idx) => `<button class="btn ${k.player===idx?'active':''}" onclick="onKongPlayerChange(${i}, ${idx})">${p}</button>`).join('')}
+                    ${PLAYERS.map((p, idx) => `<button class="btn ${k.player===idx?'active':''}" onclick="onKongPlayerChange(${i}, ${idx})">${p}</button>`).join('')}
                 </div>
             </div>
             ${k.type === 'direct' ? `
             <div class="row" style="margin-top:10px;">
                 <span class="label" style="width:70px;">点杠者</span>
                 <div class="btn-group">
-                    ${SEATS.map((p, idx) => `<button class="btn ${k.from===idx?'active':''}" ${idx===k.player?'disabled':''} onclick="onKongFromChange(${i}, ${idx})">${p}</button>`).join('')}
+                    ${PLAYERS.map((p, idx) => `<button class="btn ${k.from===idx?'active':''}" ${idx===k.player?'disabled':''} onclick="onKongFromChange(${i}, ${idx})">${p}</button>`).join('')}
                 </div>
             </div>` : ''}
         </div>
@@ -917,93 +697,84 @@ function renderKongs() {
 
 function onKongPlayerChange(index, player) {
     kongs[index].player = player;
+    // 如果点杠者和杠牌者变成同一人，自动切换到第一个可选的人
     if (kongs[index].type === 'direct' && kongs[index].from === player) {
-        for (let i = 0; i < 4; i++) { if (i !== player) { kongs[index].from = i; break; } }
+        for (let i = 0; i < 4; i++) {
+            if (i !== player) { kongs[index].from = i; break; }
+        }
     }
     renderKongs();
 }
-function onKongFromChange(index, from) { kongs[index].from = from; renderKongs(); }
+
+function onKongFromChange(index, from) {
+    kongs[index].from = from;
+    renderKongs();
+}
+
 function addKong(type) {
-    kongs.push({ id: Date.now() + Math.random(), type, player: 0, from: 1 });
+    const player = 0, from = 1;
+    kongs.push({ id: Date.now() + Math.random(), type, player, from });
     renderKongs();
 }
-function removeKong(index) { kongs.splice(index, 1); renderKongs(); }
 
-function renderTileButtons() {
-    const numberContainer = document.getElementById('numberTiles');
-    let numberHtml = '';
-    for (let n = 1; n <= 9; n++) {
-        numberHtml += `<div class="tile-btn" onclick="addHorse('${n}')"><div style="font-size:22px">${n}</div></div>`;
-    }
-    numberContainer.innerHTML = numberHtml;
-    const wordContainer = document.getElementById('wordTiles');
-    const words = [
-        { t: '东', n: 1, cls: 'wind' }, { t: '南', n: 2, cls: 'wind' },
-        { t: '西', n: 3, cls: 'wind' }, { t: '北', n: 4, cls: 'wind' },
-        { t: '中', n: 1, cls: 'dragon' }, { t: '发', n: 2, cls: 'dragon' }, { t: '白', n: 3, cls: 'dragon' }
-    ];
-    wordContainer.innerHTML = words.map(w =>
-        `<div class="tile-btn ${w.cls}" onclick="addHorse('${w.t}')"><div>${w.t}</div><div class="tile-num">${w.n}</div></div>`
-    ).join('');
-}
-function addHorse(tileStr) { selectedHorses.push(tileStr); renderSelectedHorses(); }
-function removeHorse(index) { selectedHorses.splice(index, 1); renderSelectedHorses(); }
-function onHorseChipClick(e) {
-    const chip = e.target.closest('.horse-chip');
-    if (!chip) return;
-    const idx = Number(chip.dataset.index);
-    if (!isNaN(idx)) removeHorse(idx);
-}
-function renderSelectedHorses() {
-    const container = document.getElementById('selectedHorses');
-    if (selectedHorses.length === 0) {
-        container.innerHTML = '<span class="empty-hint">尚未选择马牌，点击下方牌面添加</span>';
-        return;
-    }
-    container.innerHTML = selectedHorses.map((h, i) => {
-        const parsed = parseTile(h);
-        const label = parsed ? `${parsed.display}(${parsed.number})` : h;
-        return `<span class="horse-chip" data-index="${i}">${label}<span class="chip-x">✕</span></span>`;
-    }).join('');
+function removeKong(index) {
+    kongs.splice(index, 1);
+    renderKongs();
 }
 
-function resetRound() {
-    winType = 'none'; selfWinner = 0; selfFan = 1; discardWinner = 0; discardLoser = 1; discardFan = 4;
-    kongs = []; selectedHorses = [];
-    setWinType('none'); setSelfWinner(0); setSelfFan(1); setDiscardWinner(0); setDiscardLoser(1); setDiscardFan(4);
-    renderKongs(); renderSelectedHorses();
-    document.getElementById('finalResultCard').classList.add('hidden');
-    document.getElementById('saveSection').classList.add('hidden');
-    currentResult = null;
+function resetAll() {
+    winType = 'none';
+    selfWinner = 0;
+    selfFan = 1;
+    discardWinner = 0;
+    discardLoser = 1;
+    discardFan = 4;
+    setWinType('none');
+    setSelfWinner(0);
+    setSelfFan(1);
+    setDiscardWinner(0);
+    setDiscardLoser(1);
+    setDiscardFan(4);
+    selectedHorses = [];
+    renderSelectedHorses();
+    kongs = [];
+    renderKongs();
+    hideResults();
 }
 
 function hideResults() {
-    document.getElementById('finalResultCard').classList.add('hidden');
+    ['finalResultCard', 'detailCard'].forEach(id => {
+        document.getElementById(id).classList.add('hidden');
+    });
 }
+
+
 
 // ==================== 计算逻辑 ====================
 
 function buildBaseTransactions() {
     const transactions = [];
+
     if (winType === 'self') {
         const fan = selfFan;
         for (let i = 0; i < 4; i++) {
             if (i !== selfWinner) {
                 transactions.push({
                     payer: i, receiver: selfWinner, amount: fan,
-                    category: `自摸 ${fan} 番`,
-                    reason: `${SEATS[selfWinner]} 自摸 ${fan} 番，${SEATS[i]} 付 ${fan} 番`
+                    reason: `${PLAYERS[selfWinner]} 自摸 ${fan} 番，${PLAYERS[i]} 支付`
                 });
             }
         }
     }
     if (winType === 'discard') {
-        if (discardWinner === discardLoser) { alert('和牌玩家和点炮玩家不能是同一人'); return null; }
+        if (discardWinner === discardLoser) {
+            alert('和牌玩家和点炮玩家不能是同一人');
+            return null;
+        }
         const fan = discardFan;
         transactions.push({
             payer: discardLoser, receiver: discardWinner, amount: fan,
-            category: `点炮 ${fan} 番`,
-            reason: `${SEATS[discardWinner]} 和牌，${SEATS[discardLoser]} 点炮 ${fan} 番`
+            reason: `${PLAYERS[discardWinner]} 和牌，${PLAYERS[discardLoser]} 点炮 ${fan} 番`
         });
     }
     for (let k = 0; k < kongs.length; k++) {
@@ -1011,17 +782,17 @@ function buildBaseTransactions() {
         const p = kong.player, f = kong.from;
         if (kong.type === 'direct') {
             if (p === f) { alert(`第 ${k+1} 个直杠：杠牌者和点杠者不能相同`); return null; }
-            transactions.push({ payer: f, receiver: p, amount: 2, category: `直杠（${SEATS[p]}）`, reason: `${SEATS[p]} 直杠，${SEATS[f]} 点杠付 2 番` });
+            transactions.push({ payer: f, receiver: p, amount: 2, reason: `${PLAYERS[p]} 直杠，${PLAYERS[f]} 点杠付 2 番` });
             for (let i = 0; i < 4; i++) if (i !== p && i !== f) {
-                transactions.push({ payer: i, receiver: p, amount: 1, category: `直杠（${SEATS[p]}）`, reason: `${SEATS[p]} 直杠，${SEATS[i]} 付 1 番` });
+                transactions.push({ payer: i, receiver: p, amount: 1, reason: `${PLAYERS[p]} 直杠，${PLAYERS[i]} 付 1 番` });
             }
         } else if (kong.type === 'added') {
             for (let i = 0; i < 4; i++) if (i !== p) {
-                transactions.push({ payer: i, receiver: p, amount: 1, category: `加杠（${SEATS[p]}）`, reason: `${SEATS[p]} 加杠，${SEATS[i]} 付 1 番` });
+                transactions.push({ payer: i, receiver: p, amount: 1, reason: `${PLAYERS[p]} 加杠，${PLAYERS[i]} 付 1 番` });
             }
         } else if (kong.type === 'concealed') {
             for (let i = 0; i < 4; i++) if (i !== p) {
-                transactions.push({ payer: i, receiver: p, amount: 2, category: `暗杠（${SEATS[p]}）`, reason: `${SEATS[p]} 暗杠，${SEATS[i]} 付 2 番` });
+                transactions.push({ payer: i, receiver: p, amount: 2, reason: `${PLAYERS[p]} 暗杠，${PLAYERS[i]} 付 2 番` });
             }
         }
     }
@@ -1032,25 +803,25 @@ function calculateSettlement(baseTransactions, horseCounts, includeHorse) {
     const income = [0, 0, 0, 0, 0];
     const expense = [0, 0, 0, 0, 0];
     const details = [];
-    function addPay(payer, receiver, amount, category, reason) {
+    function addPay(payer, receiver, amount, reason) {
         if (!amount || amount <= 0) return;
         expense[payer] += amount;
         income[receiver] += amount;
-        details.push({ payer: SEATS[payer] || '买马人', receiver: SEATS[receiver] || '买马人', amount, category, reason });
+        details.push({ payer: ALL_PLAYERS[payer], receiver: ALL_PLAYERS[receiver], amount, reason });
     }
     for (const tx of baseTransactions) {
-        addPay(tx.payer, tx.receiver, tx.amount, tx.category, tx.reason);
+        addPay(tx.payer, tx.receiver, tx.amount, tx.reason);
         if (includeHorse) {
             const rhc = horseCounts[tx.receiver] || 0;
             const phc = horseCounts[tx.payer] || 0;
-            if (rhc > 0) addPay(tx.payer, M_INDEX, tx.amount * rhc, `买马（${SEATS[tx.receiver]}）`, `买中 ${SEATS[tx.receiver]} ${rhc} 次，${SEATS[tx.payer]} 额外付 ${tx.amount * rhc} 番`);
-            if (phc > 0) addPay(M_INDEX, tx.receiver, tx.amount * phc, `买马（${SEATS[tx.payer]}）`, `买中 ${SEATS[tx.payer]} ${phc} 次，买马人额外付 ${tx.amount * phc} 番`);
+            if (rhc > 0) addPay(tx.payer, M_INDEX, tx.amount * rhc, `买马买中 ${PLAYERS[tx.receiver]} ${rhc} 次`);
+            if (phc > 0) addPay(M_INDEX, tx.receiver, tx.amount * phc, `买马买中 ${PLAYERS[tx.payer]} ${phc} 次`);
         }
     }
     const rows = [];
     for (let i = 0; i < 5; i++) {
         const score = income[i] - expense[i];
-        rows.push({ name: SEATS[i] || '买马人', income: income[i], expense: expense[i], score,
+        rows.push({ name: ALL_PLAYERS[i], income: income[i], expense: expense[i], score,
             scoreText: score > 0 ? '+' + score : String(score),
             scoreClass: score > 0 ? 'win' : score < 0 ? 'lose' : 'even'
         });
@@ -1058,18 +829,8 @@ function calculateSettlement(baseTransactions, horseCounts, includeHorse) {
     return { rows, details };
 }
 
-function calculateRake(playerIdx, grossWin) {
-    // grossWin 是玩家本局总赢的筹码（正数）
-    if (grossWin <= 0 || gameConfig.rakePer <= 0) return 0;
-    const remainingCap = Math.max(0, gameConfig.rakeCap - gameState.totalRake[playerIdx]);
-    if (remainingCap <= 0) return 0;
-    const rake = Math.floor(grossWin / gameConfig.rakePer);
-    return Math.min(rake, remainingCap);
-}
-
 function calculate() {
     hideResults();
-    document.getElementById('saveSection').classList.add('hidden');
     const baseTx = buildBaseTransactions();
     if (!baseTx) return;
 
@@ -1078,215 +839,82 @@ function calculate() {
     if (!parsed.ok) { alert(parsed.error); return; }
 
     const horseCounts = [0, 0, 0, 0];
+    const horseDetails = [];
     for (const tile of parsed.tiles) {
-        horseCounts[(tile.number - 1) % 4]++;
+        const playerIndex = (tile.number - 1) % 4;
+        horseCounts[playerIndex]++;
+        horseDetails.push({ ...tile, player: PLAYERS[playerIndex] });
     }
 
-    const settle = calculateSettlement(baseTx, horseCounts, true);
-
-    // 转换为玩家视角的筹码变化
-    // settle.rows[0..3] 是座位视角，需要映射到玩家
-    const seatScores = settle.rows.slice(0, 4).map(r => r.score);
-    const playerScores = [0, 0, 0, 0, 0];
-    for (let seat = 0; seat < 4; seat++) {
-        const player = gameConfig.seatToPlayer[seat];
-        playerScores[player] = seatScores[seat];
-    }
-    // 买马人筹码变化
-    playerScores[4] = settle.rows[4].score;
-
-    // 抽水：只对赢的玩家抽（买马人不抽）
-    const rakes = [0, 0, 0, 0, 0];
-    const chipChanges = [0, 0, 0, 0, 0];
-    for (let p = 0; p < 5; p++) {
-        const grossWin = Math.max(0, playerScores[p]);
-        rakes[p] = calculateRake(p, grossWin);
-        chipChanges[p] = playerScores[p] - rakes[p];
-    }
-
-    currentResult = {
-        seatScores,
-        playerScores,
-        chipChanges,
-        rakes,
-        settle,
-        horseCounts,
-        seatToPlayer: gameConfig.seatToPlayer.slice()
-    };
+    const finalSettle = calculateSettlement(baseTx, horseCounts, true);
 
     // 渲染最终结果
     document.getElementById('finalResultCard').classList.remove('hidden');
-    let resultHtml = settle.rows.slice(0, 4).map((r, seat) => {
-        const player = gameConfig.seatToPlayer[seat];
-        return `<tr>
-            <td>${SEATS[seat]}</td>
-            <td>${getPlayerName(player)}</td>
-            <td class="${r.scoreClass}">${r.scoreText}</td>
-            <td>${rakes[player] || '-'}</td>
-            <td class="${chipChanges[player] > 0 ? 'win' : chipChanges[player] < 0 ? 'lose' : 'even'}">${chipChanges[player] > 0 ? '+' : ''}${chipChanges[player]}</td>
-        </tr>`;
-    }).join('');
-    if (settle.rows[4].score !== 0) {
-        resultHtml += `<tr>
-            <td colspan="2">玩家5（${getPlayerName(4)}）</td>
-            <td class="${settle.rows[4].scoreClass}">${settle.rows[4].scoreText}</td>
-            <td>-</td>
-            <td class="${settle.rows[4].scoreClass}">${chipChanges[4] > 0 ? '+' : ''}${chipChanges[4]}</td>
-        </tr>`;
-    }
-    document.getElementById('finalResultBody').innerHTML = resultHtml;
+    document.getElementById('finalResultBody').innerHTML = finalSettle.rows.map(r =>
+        `<tr><td>${r.name}</td><td>${r.income}</td><td>${r.expense}</td><td class="${r.scoreClass}">${r.scoreText}</td></tr>`
+    ).join('');
+    const total = finalSettle.rows.reduce((s, r) => s + r.score, 0);
+    document.getElementById('totalScore').innerHTML = `合计：${total === 0 ? '0（总账平衡）' : total}`;
 
-    const totalRakeThisRound = rakes.reduce((s, r) => s + r, 0);
-    document.getElementById('totalScore').innerHTML = `本场抽水（归场外）：${totalRakeThisRound}`;
-
-    // 显示保存选项
-    document.getElementById('saveSection').classList.remove('hidden');
-    // 默认下局座位：庄家顺时针轮换（下家变庄家）
-    const nextSeat = [gameConfig.seatToPlayer[1], gameConfig.seatToPlayer[2], gameConfig.seatToPlayer[3], gameConfig.seatToPlayer[0]];
-    for (let i = 0; i < 4; i++) {
-        const nextSelect = document.getElementById('nextSeat' + i);
-        nextSelect.innerHTML = gameConfig.playerNames.map((name, idx) =>
-            `<option value="${idx}" ${nextSeat[i] === idx ? 'selected' : ''}>${name}</option>`
-        ).join('');
-    }
-}
-
-function saveRound() {
-    if (!currentResult) return;
-    // 读取下局座位
-    const nextSeatToPlayer = [];
-    for (let i = 0; i < 4; i++) {
-        nextSeatToPlayer[i] = Number(document.getElementById('nextSeat' + i).value);
-    }
-    // 更新筹码和累计抽水（包括买马人）
-    for (let p = 0; p < 5; p++) {
-        gameState.currentChips[p] += currentResult.chipChanges[p];
-        gameState.totalRake[p] += currentResult.rakes[p];
-    }
-    // 记录本局
-    gameState.records.push({
-        type: 'round',
-        time: formatTime(),
-        seatToPlayer: currentResult.seatToPlayer,
-        nextSeatToPlayer,
-        horsePlayerName: getHorsePlayerName(),
-        chipChanges: currentResult.chipChanges.slice(),
-        rakes: currentResult.rakes.slice(),
-        seatScores: currentResult.seatScores.slice()
-    });
-    // 更新座位
-    gameConfig.seatToPlayer = nextSeatToPlayer;
-    renderSeatSelects();
-    renderChips();
-    renderRecords();
-    saveGameData();
-    resetRound();
-}
-
-function discardRound() {
-    document.getElementById('saveSection').classList.add('hidden');
-}
-
-// ==================== 本地存储 ====================
-
-const STORAGE_KEY = 'majiang_calculator_data_v1';
-
-function saveGameData() {
-    try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify({ gameConfig, gameState }));
-    } catch (e) {
-        console.warn('本地存储失败', e);
-    }
-}
-
-function loadGameData() {
-    try {
-        const data = localStorage.getItem(STORAGE_KEY);
-        if (!data) return false;
-        const parsed = JSON.parse(data);
-        if (parsed.gameConfig) {
-            gameConfig = parsed.gameConfig;
-            // 兼容旧数据：如果没有买马人，补一个空字符串
-            if (gameConfig.playerNames.length < 5) {
-                gameConfig.playerNames.push('');
+    // 渲染明细（按人分类）
+    if (finalSettle.details.length > 0) {
+        document.getElementById('detailCard').classList.remove('hidden');
+        const personDetails = {};
+        for (const name of ALL_PLAYERS) {
+            personDetails[name] = { income: [], expense: [] };
+        }
+        for (const d of finalSettle.details) {
+            personDetails[d.receiver].income.push(d);
+            personDetails[d.payer].expense.push(d);
+        }
+        let detailHtml = '';
+        for (const row of finalSettle.rows) {
+            const name = row.name;
+            const pd = personDetails[name];
+            const incomeTotal = pd.income.reduce((s, d) => s + d.amount, 0);
+            const expenseTotal = pd.expense.reduce((s, d) => s + d.amount, 0);
+            detailHtml += `<div class="person-section">
+                <div class="person-header">
+                    <span class="person-name">${name}</span>
+                    <span class="person-score ${row.scoreClass}">${row.scoreText}</span>
+                    <span class="person-total">收 ${incomeTotal} / 支 ${expenseTotal}</span>
+                </div>`;
+            if (pd.income.length > 0) {
+                detailHtml += `<div class="person-subtitle">收入</div>`;
+                for (const d of pd.income) {
+                    detailHtml += `<div class="person-line">
+                        <span class="person-amount win">+${d.amount}</span>
+                        <span>来自 ${d.payer}</span>
+                        <span class="reason">${d.reason}</span>
+                    </div>`;
+                }
             }
+            if (pd.expense.length > 0) {
+                detailHtml += `<div class="person-subtitle">支出</div>`;
+                for (const d of pd.expense) {
+                    detailHtml += `<div class="person-line">
+                        <span class="person-amount lose">-${d.amount}</span>
+                        <span>付给 ${d.receiver}</span>
+                        <span class="reason">${d.reason}</span>
+                    </div>`;
+                }
+            }
+            detailHtml += `</div>`;
         }
-        if (parsed.gameState) {
-            gameState = parsed.gameState;
-            // 兼容旧数据：补齐5个元素
-            while (gameState.currentChips.length < 5) gameState.currentChips.push(gameConfig.startChips || 100);
-            while (gameState.totalRake.length < 5) gameState.totalRake.push(0);
-        }
-        return true;
-    } catch (e) {
-        console.warn('读取本地数据失败', e);
-        return false;
+        document.getElementById('detailList').innerHTML = detailHtml;
     }
-}
-
-function clearGameData() {
-    if (!confirm('确定要清空所有对局数据和设置吗？')) return;
-    localStorage.removeItem(STORAGE_KEY);
-    gameConfig = {
-        playerNames: ['', '', '', '', ''],
-        startChips: 100,
-        rakePer: 10,
-        rakeCap: 100,
-        seatToPlayer: [0, 1, 2, 3]
-    };
-    gameState = {
-        currentChips: [100, 100, 100, 100, 100],
-        totalRake: [0, 0, 0, 0, 0],
-        records: []
-    };
-    configExpanded = true;
-    updateNameInputs();
-    renderSeatSelects();
-    renderChips();
-    renderRecords();
-    renderConfigSummary();
-    toggleConfigUI();
-    resetRound();
-}
-
-function updateNameInputs() {
-    for (let i = 0; i < 5; i++) {
-        const input = document.getElementById('name' + i);
-        if (input) input.value = gameConfig.playerNames[i] || '';
-    }
-    const startInput = document.getElementById('startChips');
-    if (startInput) startInput.value = gameConfig.startChips;
-    const rakePerInput = document.getElementById('rakePer');
-    if (rakePerInput) rakePerInput.value = gameConfig.rakePer;
-    const rakeCapInput = document.getElementById('rakeCap');
-    if (rakeCapInput) rakeCapInput.value = gameConfig.rakeCap;
-    updateConfigFormLockState();
 }
 
 // 初始化
-function init() {
-    const hasData = loadGameData();
-    updateNameInputs();
-    renderSeatSelects();
-    renderTileButtons();
-    renderSelectedHorses();
-    renderKongs();
-    renderChips();
-    renderRecords();
-    renderConfigSummary();
-    if (hasData) {
-        configExpanded = false;
-    }
-    toggleConfigUI();
-    setWinType('none');
-    setSelfWinner(0);
-    setSelfFan(1);
-    setDiscardWinner(0);
-    setDiscardLoser(1);
-    setDiscardFan(4);
-}
-
-init();
+setWinType('none');
+setSelfWinner(0);
+setSelfFan(1);
+setDiscardWinner(0);
+setDiscardLoser(1);
+setDiscardFan(4);
+renderKongs();
+renderTileButtons();
+renderSelectedHorses();
 </script>
 </body>
 </html>
