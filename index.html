@@ -764,7 +764,7 @@ function renderRecords() {
     const container = document.getElementById('recordsList');
     if (gameState.records.length === 0) { container.innerHTML = '<div class="empty">暂无记录</div>'; return; }
     container.innerHTML = gameState.records.map((r, idx) => {
-        const seatText = r.seatToPlayer.map((p, i) => `${SEATS[i]}:${getPlayerName(p)}`).join(' ');
+        const seatText = r.seatToPlayer.map((p, i) => `${SEATS[i]}:${getPlayerName(p)}`).join(' ') + ` 买马人:${r.horsePlayerName || getHorsePlayerName()}`;
         const changes = r.chipChanges.map((c, i) => {
             const name = getPlayerName(i);
             const color = i === 4 ? 'style="color:#c62828;"' : '';
@@ -1082,8 +1082,8 @@ function calculate() {
     }
     document.getElementById('finalResultBody').innerHTML = resultHtml;
 
-    const total = chipChanges.reduce((s, c) => s + c, 0);
-    document.getElementById('totalScore').innerHTML = `合计：${total === 0 ? '0（总账平衡）' : total}`;
+    const totalRakeThisRound = rakes.reduce((s, r) => s + r, 0);
+    document.getElementById('totalScore').innerHTML = `本场抽水（归场外）：${totalRakeThisRound}`;
 
     // 显示保存选项
     document.getElementById('saveSection').classList.remove('hidden');
@@ -1113,6 +1113,7 @@ function saveRound() {
     gameState.records.push({
         seatToPlayer: currentResult.seatToPlayer,
         nextSeatToPlayer,
+        horsePlayerName: getHorsePlayerName(),
         chipChanges: currentResult.chipChanges.slice(),
         rakes: currentResult.rakes.slice(),
         seatScores: currentResult.seatScores.slice()
