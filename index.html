@@ -272,9 +272,9 @@
         <div class="card">
             <div class="card-title">1. 和牌设置</div>
             <div class="row">
-                <span class="label">胡牌方式</span>
+                <span class="label">和牌方式</span>
                 <select id="winType" onchange="onWinTypeChange()">
-                    <option value="none">无人胡牌</option>
+                    <option value="none">无人和牌</option>
                     <option value="self">自摸</option>
                     <option value="discard">点炮</option>
                 </select>
@@ -301,8 +301,8 @@
             </div>
             <div id="discardSection" class="hidden">
                 <div class="row">
-                    <span class="label">胡牌玩家</span>
-                    <select id="discardWinner">
+                    <span class="label">和牌玩家</span>
+                    <select id="discardWinner" onchange="onDiscardWinnerChange()">
                         <option value="0">庄家</option>
                         <option value="1">下家</option>
                         <option value="2">对家</option>
@@ -311,7 +311,7 @@
                 </div>
                 <div class="row">
                     <span class="label">点炮玩家</span>
-                    <select id="discardLoser">
+                    <select id="discardLoser" onchange="onDiscardLoserChange()">
                         <option value="0">庄家</option>
                         <option value="1" selected>下家</option>
                         <option value="2">对家</option>
@@ -513,17 +513,29 @@ function renderKongs() {
             </div>
             <div class="row">
                 <span class="label">杠牌者</span>
-                <select onchange="kongs[${i}].player=Number(this.value);" style="flex:1;margin-right:8px;">
+                <select onchange="onKongPlayerChange(${i}, this.value);" style="flex:1;margin-right:8px;">
                     ${PLAYERS.map((p, idx) => `<option value="${idx}" ${k.player===idx?'selected':''}>${p}</option>`).join('')}
                 </select>
                 ${k.type === 'direct' ? `
                 <span class="label" style="width:70px;">点杠者</span>
                 <select onchange="kongs[${i}].from=Number(this.value);" style="flex:1;">
-                    ${PLAYERS.map((p, idx) => `<option value="${idx}" ${k.from===idx?'selected':''}>${p}</option>`).join('')}
+                    ${PLAYERS.map((p, idx) => `<option value="${idx}" ${k.from===idx?'selected':''} ${idx===k.player?'disabled':''}>${p}</option>`).join('')}
                 </select>` : ''}
             </div>
         </div>
     `).join('');
+}
+
+function onKongPlayerChange(index, value) {
+    const player = Number(value);
+    kongs[index].player = player;
+    // 如果点杠者和杠牌者变成同一人，自动切换到第一个可选的人
+    if (kongs[index].type === 'direct' && kongs[index].from === player) {
+        for (let i = 0; i < 4; i++) {
+            if (i !== player) { kongs[index].from = i; break; }
+        }
+    }
+    renderKongs();
 }
 
 function addKong(type) {
@@ -535,6 +547,36 @@ function addKong(type) {
 function removeKong(index) {
     kongs.splice(index, 1);
     renderKongs();
+}
+
+function onDiscardWinnerChange() {
+    const winner = Number(document.getElementById('discardWinner').value);
+    const loserSelect = document.getElementById('discardLoser');
+    const currentLoser = Number(loserSelect.value);
+    // 更新点炮玩家选项的禁用状态
+    Array.from(loserSelect.options).forEach(opt => {
+        opt.disabled = Number(opt.value) === winner;
+    });
+    // 如果当前点炮者和和牌者相同，自动切换
+    if (currentLoser === winner) {
+        for (let i = 0; i < 4; i++) {
+            if (i !== winner) { loserSelect.value = String(i); break; }
+        }
+    }
+}
+
+function onDiscardLoserChange() {
+    const loser = Number(document.getElementById('discardLoser').value);
+    const winnerSelect = document.getElementById('discardWinner');
+    const currentWinner = Number(winnerSelect.value);
+    Array.from(winnerSelect.options).forEach(opt => {
+        opt.disabled = Number(opt.value) === loser;
+    });
+    if (currentWinner === loser) {
+        for (let i = 0; i < 4; i++) {
+            if (i !== loser) { winnerSelect.value = String(i); break; }
+        }
+    }
 }
 
 function resetAll() {
@@ -582,13 +624,13 @@ function buildBaseTransactions() {
     }
     if (winType === 'discard') {
         if (discardWinner === discardLoser) {
-            alert('胡牌玩家和点炮玩家不能是同一人');
+            alert('和牌玩家和点炮玩家不能是同一人');
             return null;
         }
         const fan = Number(document.getElementById('discardFan').value);
         transactions.push({
             payer: discardLoser, receiver: discardWinner, amount: fan,
-            reason: `${PLAYERS[discardWinner]} 胡牌，${PLAYERS[discardLoser]} 点炮 ${fan} 番`
+            reason: `${PLAYERS[discardWinner]} 和牌，${PLAYERS[discardLoser]} 点炮 ${fan} 番`
         });
     }
     for (let k = 0; k < kongs.length; k++) {
@@ -686,6 +728,8 @@ function calculate() {
 renderKongs();
 renderTileButtons();
 renderSelectedHorses();
+onDiscardWinnerChange();
+onDiscardLoserChange();
 </script>
 </body>
 </html>
