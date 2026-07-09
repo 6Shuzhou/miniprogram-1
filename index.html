@@ -267,6 +267,29 @@
         }
 
         /* 对局设置 */
+        .config-summary {
+            background: #f8f8f8;
+            border-radius: 10px;
+            padding: 14px;
+            font-size: 14px;
+            line-height: 1.8;
+            color: #555;
+        }
+        .config-summary .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+        }
+        .config-summary .summary-item:last-child {
+            margin-bottom: 0;
+        }
+        .config-summary .summary-label {
+            color: #888;
+        }
+        .config-summary .summary-value {
+            font-weight: 600;
+            color: #333;
+        }
         .config-row {
             display: flex;
             gap: 8px;
@@ -390,68 +413,6 @@
     </div>
 
     <div class="container">
-        <!-- 对局设置 -->
-        <div class="card">
-            <div class="card-title">对局设置</div>
-            <div class="row">
-                <span class="label">玩家名字</span>
-                <div class="seat-row" id="nameInputs">
-                    <div class="seat-box">
-                        <div class="seat-name">玩家1</div>
-                        <input type="text" id="name0" value="玩家1" placeholder="名字" style="width:100%;padding:6px;border:1px solid #ddd;border-radius:6px;font-size:13px;">
-                    </div>
-                    <div class="seat-box">
-                        <div class="seat-name">玩家2</div>
-                        <input type="text" id="name1" value="玩家2" placeholder="名字" style="width:100%;padding:6px;border:1px solid #ddd;border-radius:6px;font-size:13px;">
-                    </div>
-                    <div class="seat-box">
-                        <div class="seat-name">玩家3</div>
-                        <input type="text" id="name2" value="玩家3" placeholder="名字" style="width:100%;padding:6px;border:1px solid #ddd;border-radius:6px;font-size:13px;">
-                    </div>
-                    <div class="seat-box">
-                        <div class="seat-name">玩家4</div>
-                        <input type="text" id="name3" value="玩家4" placeholder="名字" style="width:100%;padding:6px;border:1px solid #ddd;border-radius:6px;font-size:13px;">
-                    </div>
-                </div>
-            </div>
-            <div class="config-row">
-                <span class="label">起始筹码</span>
-                <input type="number" id="startChips" value="1000" min="0">
-            </div>
-            <div class="config-row">
-                <span class="label">抽水</span>
-                <span style="font-size:14px;color:#666;">每进</span>
-                <input type="number" id="rakePer" value="10" min="1" style="flex:0.8;">
-                <span style="font-size:14px;color:#666;">个抽1个，上限</span>
-                <input type="number" id="rakeCap" value="100" min="0" style="flex:0.8;">
-            </div>
-            <div class="row">
-                <span class="label">本局座位</span>
-                <div class="seat-row" id="seatConfig">
-                    <div class="seat-box">
-                        <div class="seat-name">庄家</div>
-                        <select id="seat0" onchange="updateSeat(0, this.value)"></select>
-                    </div>
-                    <div class="seat-box">
-                        <div class="seat-name">庄的下家</div>
-                        <select id="seat1" onchange="updateSeat(1, this.value)"></select>
-                    </div>
-                    <div class="seat-box">
-                        <div class="seat-name">庄的对家</div>
-                        <select id="seat2" onchange="updateSeat(2, this.value)"></select>
-                    </div>
-                    <div class="seat-box">
-                        <div class="seat-name">庄的上家</div>
-                        <select id="seat3" onchange="updateSeat(3, this.value)"></select>
-                    </div>
-                </div>
-            </div>
-            <div class="btn-row">
-                <button class="btn btn-primary" onclick="saveGameConfig()">保存设置</button>
-                <button class="btn btn-secondary" onclick="resetGame()">重置对局</button>
-            </div>
-        </div>
-
         <!-- 和牌设置 -->
         <div class="card">
             <div class="card-title">1. 和牌设置</div>
@@ -587,6 +548,51 @@
             <div class="card-title">对局记录</div>
             <div id="recordsList"><div class="empty">暂无记录</div></div>
         </div>
+
+        <!-- 对局设置 -->
+        <div class="card">
+            <div class="card-title" style="justify-content:space-between;">
+                <span>对局设置</span>
+                <button class="btn btn-secondary" style="margin:0;padding:6px 12px;font-size:13px;" onclick="toggleConfig()" id="toggleConfigBtn">展开</button>
+            </div>
+            <div id="configSummary" class="config-summary"></div>
+            <div id="configForm" class="hidden">
+                <div class="row">
+                    <span class="label">玩家名字</span>
+                    <div class="seat-row" id="nameInputs">
+                        <div class="seat-box"><div class="seat-name">玩家1</div><input type="text" id="name0" placeholder="名字" style="width:100%;padding:6px;border:1px solid #ddd;border-radius:6px;font-size:13px;"></div>
+                        <div class="seat-box"><div class="seat-name">玩家2</div><input type="text" id="name1" placeholder="名字" style="width:100%;padding:6px;border:1px solid #ddd;border-radius:6px;font-size:13px;"></div>
+                        <div class="seat-box"><div class="seat-name">玩家3</div><input type="text" id="name2" placeholder="名字" style="width:100%;padding:6px;border:1px solid #ddd;border-radius:6px;font-size:13px;"></div>
+                        <div class="seat-box"><div class="seat-name">玩家4</div><input type="text" id="name3" placeholder="名字" style="width:100%;padding:6px;border:1px solid #ddd;border-radius:6px;font-size:13px;"></div>
+                        <div class="seat-box"><div class="seat-name" style="color:#c62828;">买马人</div><input type="text" id="name4" placeholder="名字" style="width:100%;padding:6px;border:1px solid #ddd;border-radius:6px;font-size:13px;"></div>
+                    </div>
+                </div>
+                <div class="config-row">
+                    <span class="label">起始筹码</span>
+                    <input type="number" id="startChips" value="100" min="0">
+                </div>
+                <div class="config-row">
+                    <span class="label">抽水</span>
+                    <span style="font-size:14px;color:#666;">每进</span>
+                    <input type="number" id="rakePer" value="10" min="1" style="flex:0.8;">
+                    <span style="font-size:14px;color:#666;">个抽1个，上限</span>
+                    <input type="number" id="rakeCap" value="100" min="0" style="flex:0.8;">
+                </div>
+                <div class="row">
+                    <span class="label">本局座位</span>
+                    <div class="seat-row" id="seatConfig">
+                        <div class="seat-box"><div class="seat-name">庄家</div><select id="seat0" onchange="updateSeat(0, this.value)"></select></div>
+                        <div class="seat-box"><div class="seat-name">庄的下家</div><select id="seat1" onchange="updateSeat(1, this.value)"></select></div>
+                        <div class="seat-box"><div class="seat-name">庄的对家</div><select id="seat2" onchange="updateSeat(2, this.value)"></select></div>
+                        <div class="seat-box"><div class="seat-name">庄的上家</div><select id="seat3" onchange="updateSeat(3, this.value)"></select></div>
+                    </div>
+                </div>
+                <div class="btn-row">
+                    <button class="btn btn-primary" onclick="saveGameConfig()">保存设置</button>
+                    <button class="btn btn-secondary" onclick="resetGame()">重置对局</button>
+                </div>
+            </div>
+        </div>
     </div>
 
 <script>
@@ -640,24 +646,27 @@ function parseHorseInput(input) {
 // ==================== 对局状态 ====================
 
 let gameConfig = {
-    playerNames: ['玩家1', '玩家2', '玩家3', '玩家4'],
-    startChips: 1000,
+    playerNames: ['', '', '', '', ''],
+    startChips: 100,
     rakePer: 10,
     rakeCap: 100,
     seatToPlayer: [0, 1, 2, 3] // 座位 -> 玩家索引
 };
 
 let gameState = {
-    currentChips: [1000, 1000, 1000, 1000],
-    totalRake: [0, 0, 0, 0],
+    currentChips: [100, 100, 100, 100, 100],
+    totalRake: [0, 0, 0, 0, 0],
     records: []
 };
+
+let configExpanded = true; // 默认展开，保存后折叠
 
 let currentResult = null;
 
 function getSeatName(seatIdx) { return SEATS[seatIdx]; }
 function getPlayerNameBySeat(seatIdx) { return gameConfig.playerNames[gameConfig.seatToPlayer[seatIdx]]; }
-function getPlayerName(playerIdx) { return gameConfig.playerNames[playerIdx]; }
+function getPlayerName(playerIdx) { return gameConfig.playerNames[playerIdx] || ('玩家' + (playerIdx + 1)); }
+function getHorsePlayerName() { return gameConfig.playerNames[4] || '买马人'; }
 
 function renderSeatSelects() {
     for (let i = 0; i < 4; i++) {
@@ -682,21 +691,28 @@ function updateSeat(seatIdx, playerIdx) {
 }
 
 function saveGameConfig() {
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < 5; i++) {
         const name = document.getElementById('name' + i).value.trim();
         gameConfig.playerNames[i] = name || ('玩家' + (i + 1));
     }
     gameConfig.startChips = Number(document.getElementById('startChips').value) || 0;
     gameConfig.rakePer = Number(document.getElementById('rakePer').value) || 1;
     gameConfig.rakeCap = Number(document.getElementById('rakeCap').value) || 0;
+    // 重置筹码为新的起始筹码
+    gameState.currentChips = gameConfig.playerNames.map(() => gameConfig.startChips);
+    gameState.totalRake = [0, 0, 0, 0, 0];
     renderSeatSelects();
     renderChips();
+    renderRecords();
+    renderConfigSummary();
+    configExpanded = false;
+    toggleConfigUI();
     alert('设置已保存');
 }
 
 function resetGame() {
     gameState.currentChips = gameConfig.playerNames.map(() => gameConfig.startChips);
-    gameState.totalRake = [0, 0, 0, 0];
+    gameState.totalRake = [0, 0, 0, 0, 0];
     gameState.records = [];
     currentResult = null;
     renderChips();
@@ -704,13 +720,40 @@ function resetGame() {
     resetRound();
 }
 
+function toggleConfig() {
+    configExpanded = !configExpanded;
+    toggleConfigUI();
+}
+
+function toggleConfigUI() {
+    document.getElementById('configForm').classList.toggle('hidden', !configExpanded);
+    document.getElementById('configSummary').classList.toggle('hidden', configExpanded);
+    document.getElementById('toggleConfigBtn').innerText = configExpanded ? '收起' : '修改设置';
+}
+
+function renderConfigSummary() {
+    const names = gameConfig.playerNames.map((n, i) => {
+        if (i === 4) return `<span style="color:#c62828;">${n || '买马人'}</span>`;
+        return n || ('玩家' + (i + 1));
+    }).join('、');
+    const seatText = gameConfig.seatToPlayer.map((p, i) => `${SEATS[i]}:${gameConfig.playerNames[p] || ('玩家' + (p + 1))}`).join(' ');
+    document.getElementById('configSummary').innerHTML = `
+        <div class="summary-item"><span class="summary-label">玩家</span><span class="summary-value">${names}</span></div>
+        <div class="summary-item"><span class="summary-label">本局座位</span><span class="summary-value">${seatText}</span></div>
+        <div class="summary-item"><span class="summary-label">起始筹码</span><span class="summary-value">${gameConfig.startChips}</span></div>
+        <div class="summary-item"><span class="summary-label">抽水</span><span class="summary-value">每进 ${gameConfig.rakePer} 抽 1，上限 ${gameConfig.rakeCap}</span></div>
+    `;
+}
+
 function renderChips() {
     const container = document.getElementById('chipsGrid');
-    container.innerHTML = gameConfig.playerNames.map((name, i) => {
+    container.innerHTML = gameConfig.playerNames.map((rawName, i) => {
+        const name = rawName || (i === 4 ? '买马人' : '玩家' + (i + 1));
         const chips = gameState.currentChips[i];
         const cls = chips > 0 ? 'win' : chips < 0 ? 'lose' : 'even';
+        const labelColor = i === 4 ? 'style="color:#c62828;"' : '';
         return `<div class="chip-card">
-            <div class="player-name">${name}</div>
+            <div class="player-name" ${labelColor}>${name}</div>
             <div class="chip-amount ${cls}">${chips}</div>
             <div class="chip-change">累计抽水 ${gameState.totalRake[i]}</div>
         </div>`;
@@ -721,9 +764,13 @@ function renderRecords() {
     const container = document.getElementById('recordsList');
     if (gameState.records.length === 0) { container.innerHTML = '<div class="empty">暂无记录</div>'; return; }
     container.innerHTML = gameState.records.map((r, idx) => {
-        const seatText = r.seatToPlayer.map((p, i) => `${SEATS[i]}:${gameConfig.playerNames[p]}`).join(' ');
-        const changes = r.chipChanges.map((c, i) => `${gameConfig.playerNames[i]}: ${c > 0 ? '+' : ''}${c}`).join('，');
-        const rakes = r.rakes.map((rk, i) => rk > 0 ? `${gameConfig.playerNames[i]}-${rk}` : '').filter(Boolean).join('，');
+        const seatText = r.seatToPlayer.map((p, i) => `${SEATS[i]}:${getPlayerName(p)}`).join(' ');
+        const changes = r.chipChanges.map((c, i) => {
+            const name = getPlayerName(i);
+            const color = i === 4 ? 'style="color:#c62828;"' : '';
+            return `<span ${color}>${name}: ${c > 0 ? '+' : ''}${c}</span>`;
+        }).join('，');
+        const rakes = r.rakes.map((rk, i) => rk > 0 ? `${getPlayerName(i)}-${rk}` : '').filter(Boolean).join('，');
         return `<div class="record-item">
             <div class="record-title"><span>第 ${idx + 1} 局</span><span style="font-size:12px;color:#888;">${seatText}</span></div>
             <div class="record-changes">${changes}</div>
@@ -986,16 +1033,18 @@ function calculate() {
     // 转换为玩家视角的筹码变化
     // settle.rows[0..3] 是座位视角，需要映射到玩家
     const seatScores = settle.rows.slice(0, 4).map(r => r.score);
-    const playerScores = [0, 0, 0, 0];
+    const playerScores = [0, 0, 0, 0, 0];
     for (let seat = 0; seat < 4; seat++) {
         const player = gameConfig.seatToPlayer[seat];
         playerScores[player] = seatScores[seat];
     }
+    // 买马人筹码变化
+    playerScores[4] = settle.rows[4].score;
 
-    // 抽水：只对赢的玩家抽
-    const rakes = [0, 0, 0, 0];
-    const chipChanges = [0, 0, 0, 0];
-    for (let p = 0; p < 4; p++) {
+    // 抽水：只对赢的玩家抽（买马人不抽）
+    const rakes = [0, 0, 0, 0, 0];
+    const chipChanges = [0, 0, 0, 0, 0];
+    for (let p = 0; p < 5; p++) {
         const grossWin = Math.max(0, playerScores[p]);
         rakes[p] = calculateRake(p, grossWin);
         chipChanges[p] = playerScores[p] - rakes[p];
@@ -1013,23 +1062,27 @@ function calculate() {
 
     // 渲染最终结果
     document.getElementById('finalResultCard').classList.remove('hidden');
-    document.getElementById('finalResultBody').innerHTML = settle.rows.slice(0, 4).map((r, seat) => {
+    let resultHtml = settle.rows.slice(0, 4).map((r, seat) => {
         const player = gameConfig.seatToPlayer[seat];
         return `<tr>
             <td>${SEATS[seat]}</td>
-            <td>${gameConfig.playerNames[player]}</td>
+            <td>${getPlayerName(player)}</td>
             <td class="${r.scoreClass}">${r.scoreText}</td>
             <td>${rakes[player] || '-'}</td>
             <td class="${chipChanges[player] > 0 ? 'win' : chipChanges[player] < 0 ? 'lose' : 'even'}">${chipChanges[player] > 0 ? '+' : ''}${chipChanges[player]}</td>
         </tr>`;
-    }).join('') + (settle.rows[4].score !== 0 ? `<tr>
-        <td colspan="2">买马人</td>
-        <td class="${settle.rows[4].scoreClass}">${settle.rows[4].scoreText}</td>
-        <td>-</td>
-        <td class="${settle.rows[4].scoreClass}">${settle.rows[4].scoreText}</td>
-    </tr>` : '');
+    }).join('');
+    if (settle.rows[4].score !== 0) {
+        resultHtml += `<tr>
+            <td colspan="2">买马人（${getHorsePlayerName()}）</td>
+            <td class="${settle.rows[4].scoreClass}">${settle.rows[4].scoreText}</td>
+            <td>-</td>
+            <td class="${settle.rows[4].scoreClass}">${chipChanges[4] > 0 ? '+' : ''}${chipChanges[4]}</td>
+        </tr>`;
+    }
+    document.getElementById('finalResultBody').innerHTML = resultHtml;
 
-    const total = chipChanges.reduce((s, c) => s + c, 0) + settle.rows[4].score;
+    const total = chipChanges.reduce((s, c) => s + c, 0);
     document.getElementById('totalScore').innerHTML = `合计：${total === 0 ? '0（总账平衡）' : total}`;
 
     // 显示保存选项
@@ -1051,8 +1104,8 @@ function saveRound() {
     for (let i = 0; i < 4; i++) {
         nextSeatToPlayer[i] = Number(document.getElementById('nextSeat' + i).value);
     }
-    // 更新筹码和累计抽水
-    for (let p = 0; p < 4; p++) {
+    // 更新筹码和累计抽水（包括买马人）
+    for (let p = 0; p < 5; p++) {
         gameState.currentChips[p] += currentResult.chipChanges[p];
         gameState.totalRake[p] += currentResult.rakes[p];
     }
@@ -1084,6 +1137,8 @@ function init() {
     renderKongs();
     renderChips();
     renderRecords();
+    renderConfigSummary();
+    toggleConfigUI();
     setWinType('none');
     setSelfWinner(0);
     setSelfFan(1);
