@@ -107,6 +107,43 @@
             flex-wrap: wrap;
             gap: 8px;
         }
+
+        /* 按钮组选择器 */
+        .btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            flex: 1;
+        }
+        .btn-group .btn {
+            flex: 1;
+            min-width: 60px;
+            padding: 8px 10px;
+            background: #f0f0f0;
+            color: #333;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .btn-group .btn:hover {
+            background: #e8f5e9;
+            border-color: #a5d6a7;
+        }
+        .btn-group .btn.active {
+            background: #07c160;
+            color: white;
+            border-color: #07c160;
+            font-weight: 600;
+        }
+        .btn-group .btn:disabled {
+            background: #f5f5f5;
+            color: #bbb;
+            border-color: #eee;
+            cursor: not-allowed;
+        }
         .kong-card {
             background: #fafafa;
             border: 1px solid #e8e8e8;
@@ -273,57 +310,57 @@
             <div class="card-title">1. 和牌设置</div>
             <div class="row">
                 <span class="label">和牌方式</span>
-                <select id="winType" onchange="onWinTypeChange()">
-                    <option value="none">无人和牌</option>
-                    <option value="self">自摸</option>
-                    <option value="discard">点炮</option>
-                </select>
+                <div class="btn-group" id="winTypeGroup">
+                    <button class="btn active" data-value="none" onclick="setWinType('none')">无人和牌</button>
+                    <button class="btn" data-value="self" onclick="setWinType('self')">自摸</button>
+                    <button class="btn" data-value="discard" onclick="setWinType('discard')">点炮</button>
+                </div>
             </div>
             <div id="selfDrawSection" class="hidden">
                 <div class="row">
                     <span class="label">自摸玩家</span>
-                    <select id="selfWinner">
-                        <option value="0">庄家</option>
-                        <option value="1">下家</option>
-                        <option value="2">对家</option>
-                        <option value="3">上家</option>
-                    </select>
+                    <div class="btn-group" id="selfWinnerGroup">
+                        <button class="btn active" data-value="0" onclick="setSelfWinner(0)">庄家</button>
+                        <button class="btn" data-value="1" onclick="setSelfWinner(1)">下家</button>
+                        <button class="btn" data-value="2" onclick="setSelfWinner(2)">对家</button>
+                        <button class="btn" data-value="3" onclick="setSelfWinner(3)">上家</button>
+                    </div>
                 </div>
                 <div class="row">
                     <span class="label">自摸番数</span>
-                    <select id="selfFan">
-                        <option value="1">1 番</option>
-                        <option value="2">2 番</option>
-                        <option value="4">4 番</option>
-                        <option value="8">8 番</option>
-                    </select>
+                    <div class="btn-group" id="selfFanGroup">
+                        <button class="btn active" data-value="1" onclick="setSelfFan(1)">1 番</button>
+                        <button class="btn" data-value="2" onclick="setSelfFan(2)">2 番</button>
+                        <button class="btn" data-value="4" onclick="setSelfFan(4)">4 番</button>
+                        <button class="btn" data-value="8" onclick="setSelfFan(8)">8 番</button>
+                    </div>
                 </div>
             </div>
             <div id="discardSection" class="hidden">
                 <div class="row">
                     <span class="label">和牌玩家</span>
-                    <select id="discardWinner" onchange="onDiscardWinnerChange()">
-                        <option value="0">庄家</option>
-                        <option value="1">下家</option>
-                        <option value="2">对家</option>
-                        <option value="3">上家</option>
-                    </select>
+                    <div class="btn-group" id="discardWinnerGroup">
+                        <button class="btn active" data-value="0" onclick="setDiscardWinner(0)">庄家</button>
+                        <button class="btn" data-value="1" onclick="setDiscardWinner(1)">下家</button>
+                        <button class="btn" data-value="2" onclick="setDiscardWinner(2)">对家</button>
+                        <button class="btn" data-value="3" onclick="setDiscardWinner(3)">上家</button>
+                    </div>
                 </div>
                 <div class="row">
                     <span class="label">点炮玩家</span>
-                    <select id="discardLoser" onchange="onDiscardLoserChange()">
-                        <option value="0">庄家</option>
-                        <option value="1" selected>下家</option>
-                        <option value="2">对家</option>
-                        <option value="3">上家</option>
-                    </select>
+                    <div class="btn-group" id="discardLoserGroup">
+                        <button class="btn" data-value="0" onclick="setDiscardLoser(0)">庄家</button>
+                        <button class="btn active" data-value="1" onclick="setDiscardLoser(1)">下家</button>
+                        <button class="btn" data-value="2" onclick="setDiscardLoser(2)">对家</button>
+                        <button class="btn" data-value="3" onclick="setDiscardLoser(3)">上家</button>
+                    </div>
                 </div>
                 <div class="row">
                     <span class="label">点炮番数</span>
-                    <select id="discardFan">
-                        <option value="4">4 番</option>
-                        <option value="8">8 番</option>
-                    </select>
+                    <div class="btn-group" id="discardFanGroup">
+                        <button class="btn active" data-value="4" onclick="setDiscardFan(4)">4 番</button>
+                        <button class="btn" data-value="8" onclick="setDiscardFan(8)">8 番</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -496,10 +533,75 @@ function renderSelectedHorses() {
     }).join('');
 }
 
-function onWinTypeChange() {
-    const type = document.getElementById('winType').value;
+// 当前选择状态
+let winType = 'none';
+let selfWinner = 0;
+let selfFan = 1;
+let discardWinner = 0;
+let discardLoser = 1;
+let discardFan = 4;
+
+function setActiveButton(groupId, value) {
+    const group = document.getElementById(groupId);
+    if (!group) return;
+    Array.from(group.children).forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.value === String(value));
+    });
+}
+
+function setWinType(type) {
+    winType = type;
+    setActiveButton('winTypeGroup', type);
     document.getElementById('selfDrawSection').classList.toggle('hidden', type !== 'self');
     document.getElementById('discardSection').classList.toggle('hidden', type !== 'discard');
+}
+
+function setSelfWinner(v) {
+    selfWinner = v;
+    setActiveButton('selfWinnerGroup', v);
+}
+
+function setSelfFan(v) {
+    selfFan = v;
+    setActiveButton('selfFanGroup', v);
+}
+
+function setDiscardWinner(v) {
+    discardWinner = v;
+    setActiveButton('discardWinnerGroup', v);
+    updateDiscardButtons();
+}
+
+function setDiscardLoser(v) {
+    discardLoser = v;
+    setActiveButton('discardLoserGroup', v);
+    updateDiscardButtons();
+}
+
+function setDiscardFan(v) {
+    discardFan = v;
+    setActiveButton('discardFanGroup', v);
+}
+
+function updateDiscardButtons() {
+    const winnerGroup = document.getElementById('discardWinnerGroup');
+    const loserGroup = document.getElementById('discardLoserGroup');
+    if (winnerGroup) {
+        Array.from(winnerGroup.children).forEach(btn => {
+            btn.disabled = Number(btn.dataset.value) === discardLoser;
+        });
+    }
+    if (loserGroup) {
+        Array.from(loserGroup.children).forEach(btn => {
+            btn.disabled = Number(btn.dataset.value) === discardWinner;
+        });
+    }
+    // 如果当前选中项被禁用，自动切换
+    if (discardWinner === discardLoser) {
+        for (let i = 0; i < 4; i++) {
+            if (i !== discardLoser) { discardWinner = i; setActiveButton('discardWinnerGroup', i); break; }
+        }
+    }
 }
 
 function renderKongs() {
@@ -513,21 +615,22 @@ function renderKongs() {
             </div>
             <div class="row">
                 <span class="label">杠牌者</span>
-                <select onchange="onKongPlayerChange(${i}, this.value);" style="flex:1;margin-right:8px;">
-                    ${PLAYERS.map((p, idx) => `<option value="${idx}" ${k.player===idx?'selected':''}>${p}</option>`).join('')}
-                </select>
-                ${k.type === 'direct' ? `
-                <span class="label" style="width:70px;">点杠者</span>
-                <select onchange="kongs[${i}].from=Number(this.value);" style="flex:1;">
-                    ${PLAYERS.map((p, idx) => `<option value="${idx}" ${k.from===idx?'selected':''} ${idx===k.player?'disabled':''}>${p}</option>`).join('')}
-                </select>` : ''}
+                <div class="btn-group">
+                    ${PLAYERS.map((p, idx) => `<button class="btn ${k.player===idx?'active':''}" onclick="onKongPlayerChange(${i}, ${idx})">${p}</button>`).join('')}
+                </div>
             </div>
+            ${k.type === 'direct' ? `
+            <div class="row" style="margin-top:10px;">
+                <span class="label" style="width:70px;">点杠者</span>
+                <div class="btn-group">
+                    ${PLAYERS.map((p, idx) => `<button class="btn ${k.from===idx?'active':''}" ${idx===k.player?'disabled':''} onclick="onKongFromChange(${i}, ${idx})">${p}</button>`).join('')}
+                </div>
+            </div>` : ''}
         </div>
     `).join('');
 }
 
-function onKongPlayerChange(index, value) {
-    const player = Number(value);
+function onKongPlayerChange(index, player) {
     kongs[index].player = player;
     // 如果点杠者和杠牌者变成同一人，自动切换到第一个可选的人
     if (kongs[index].type === 'direct' && kongs[index].from === player) {
@@ -535,6 +638,11 @@ function onKongPlayerChange(index, value) {
             if (i !== player) { kongs[index].from = i; break; }
         }
     }
+    renderKongs();
+}
+
+function onKongFromChange(index, from) {
+    kongs[index].from = from;
     renderKongs();
 }
 
@@ -549,48 +657,23 @@ function removeKong(index) {
     renderKongs();
 }
 
-function onDiscardWinnerChange() {
-    const winner = Number(document.getElementById('discardWinner').value);
-    const loserSelect = document.getElementById('discardLoser');
-    const currentLoser = Number(loserSelect.value);
-    // 更新点炮玩家选项的禁用状态
-    Array.from(loserSelect.options).forEach(opt => {
-        opt.disabled = Number(opt.value) === winner;
-    });
-    // 如果当前点炮者和和牌者相同，自动切换
-    if (currentLoser === winner) {
-        for (let i = 0; i < 4; i++) {
-            if (i !== winner) { loserSelect.value = String(i); break; }
-        }
-    }
-}
-
-function onDiscardLoserChange() {
-    const loser = Number(document.getElementById('discardLoser').value);
-    const winnerSelect = document.getElementById('discardWinner');
-    const currentWinner = Number(winnerSelect.value);
-    Array.from(winnerSelect.options).forEach(opt => {
-        opt.disabled = Number(opt.value) === loser;
-    });
-    if (currentWinner === loser) {
-        for (let i = 0; i < 4; i++) {
-            if (i !== loser) { winnerSelect.value = String(i); break; }
-        }
-    }
-}
-
 function resetAll() {
-    document.getElementById('winType').value = 'none';
-    document.getElementById('selfWinner').value = '0';
-    document.getElementById('selfFan').value = '1';
-    document.getElementById('discardWinner').value = '0';
-    document.getElementById('discardLoser').value = '1';
-    document.getElementById('discardFan').value = '4';
+    winType = 'none';
+    selfWinner = 0;
+    selfFan = 1;
+    discardWinner = 0;
+    discardLoser = 1;
+    discardFan = 4;
+    setWinType('none');
+    setSelfWinner(0);
+    setSelfFan(1);
+    setDiscardWinner(0);
+    setDiscardLoser(1);
+    setDiscardFan(4);
     selectedHorses = [];
     renderSelectedHorses();
     kongs = [];
     renderKongs();
-    onWinTypeChange();
     hideResults();
 }
 
@@ -606,18 +689,14 @@ function hideResults() {
 
 function buildBaseTransactions() {
     const transactions = [];
-    const winType = document.getElementById('winType').value;
-    const winner = Number(document.getElementById('selfWinner').value);
-    const discardWinner = Number(document.getElementById('discardWinner').value);
-    const discardLoser = Number(document.getElementById('discardLoser').value);
 
     if (winType === 'self') {
-        const fan = Number(document.getElementById('selfFan').value);
+        const fan = selfFan;
         for (let i = 0; i < 4; i++) {
-            if (i !== winner) {
+            if (i !== selfWinner) {
                 transactions.push({
-                    payer: i, receiver: winner, amount: fan,
-                    reason: `${PLAYERS[winner]} 自摸 ${fan} 番，${PLAYERS[i]} 支付`
+                    payer: i, receiver: selfWinner, amount: fan,
+                    reason: `${PLAYERS[selfWinner]} 自摸 ${fan} 番，${PLAYERS[i]} 支付`
                 });
             }
         }
@@ -627,7 +706,7 @@ function buildBaseTransactions() {
             alert('和牌玩家和点炮玩家不能是同一人');
             return null;
         }
-        const fan = Number(document.getElementById('discardFan').value);
+        const fan = discardFan;
         transactions.push({
             payer: discardLoser, receiver: discardWinner, amount: fan,
             reason: `${PLAYERS[discardWinner]} 和牌，${PLAYERS[discardLoser]} 点炮 ${fan} 番`
@@ -725,11 +804,15 @@ function calculate() {
 }
 
 // 初始化
+setWinType('none');
+setSelfWinner(0);
+setSelfFan(1);
+setDiscardWinner(0);
+setDiscardLoser(1);
+setDiscardFan(4);
 renderKongs();
 renderTileButtons();
 renderSelectedHorses();
-onDiscardWinnerChange();
-onDiscardLoserChange();
 </script>
 </body>
 </html>
