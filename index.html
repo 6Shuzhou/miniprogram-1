@@ -49,16 +49,16 @@
         }
         .row {
             display: flex;
-            align-items: center;
-            margin-bottom: 12px;
-            flex-wrap: wrap;
+            flex-direction: column;
+            align-items: flex-start;
+            margin-bottom: 14px;
         }
         .row:last-child { margin-bottom: 0; }
         .label {
-            width: 90px;
+            width: 100%;
             color: #555;
             font-size: 14px;
-            flex-shrink: 0;
+            margin-bottom: 8px;
         }
         select, input[type="text"] {
             flex: 1;
@@ -110,15 +110,20 @@
 
         /* 按钮组选择器 */
         .btn-group {
-            display: flex;
-            flex-wrap: wrap;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
             gap: 8px;
-            flex: 1;
+            width: 100%;
+        }
+        .btn-group.three-cols {
+            grid-template-columns: repeat(3, 1fr);
+        }
+        .btn-group.two-cols {
+            grid-template-columns: repeat(2, 1fr);
         }
         .btn-group .btn {
-            flex: 1;
-            min-width: 60px;
-            padding: 8px 10px;
+            padding: 10px 4px;
+            min-height: 44px;
             background: #f0f0f0;
             color: #333;
             border: 1px solid #ddd;
@@ -127,6 +132,10 @@
             text-align: center;
             cursor: pointer;
             transition: all 0.15s;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         .btn-group .btn:hover {
             background: #e8f5e9;
@@ -143,6 +152,7 @@
             color: #bbb;
             border-color: #eee;
             cursor: not-allowed;
+            opacity: 0.6;
         }
         .kong-card {
             background: #fafafa;
@@ -343,8 +353,8 @@
         }
 
         @media (max-width: 400px) {
-            .label { width: 80px; font-size: 13px; }
-            select, input[type="text"] { font-size: 14px; padding: 8px 10px; }
+            .btn-group { gap: 6px; }
+            .btn-group .btn { font-size: 13px; padding: 8px 2px; min-height: 40px; }
             .tile-grid { gap: 5px; }
             .tile-btn { font-size: 15px; }
         }
@@ -362,7 +372,7 @@
             <div class="card-title">1. 和牌设置</div>
             <div class="row">
                 <span class="label">和牌方式</span>
-                <div class="btn-group" id="winTypeGroup">
+                <div class="btn-group three-cols" id="winTypeGroup">
                     <button class="btn active" data-value="none" onclick="setWinType('none')">无人和牌</button>
                     <button class="btn" data-value="self" onclick="setWinType('self')">自摸</button>
                     <button class="btn" data-value="discard" onclick="setWinType('discard')">点炮</button>
@@ -409,7 +419,7 @@
                 </div>
                 <div class="row">
                     <span class="label">点炮番数</span>
-                    <div class="btn-group" id="discardFanGroup">
+                    <div class="btn-group two-cols" id="discardFanGroup">
                         <button class="btn active" data-value="4" onclick="setDiscardFan(4)">4 番</button>
                         <button class="btn" data-value="8" onclick="setDiscardFan(8)">8 番</button>
                     </div>
