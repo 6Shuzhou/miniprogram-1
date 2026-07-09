@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>地方麻将计算器</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: #f0f2f5;
+            color: #333;
+            font-size: 15px;
+            line-height: 1.5;
+            padding-bottom: 40px;
+        }
+        .header {
+            background: linear-gradient(135deg, #07c160 0%, #05a050 100%);
+            color: white;
+            padding: 24px 16px;
+            text-align: center;
+            margin-bottom: 16px;
+        }
+        .header h1 { font-size: 22px; font-weight: 600; }
+        .header p { font-size: 13px; opacity: 0.9; margin-top: 4px; }
+        .container { max-width: 600px; margin: 0 auto; padding: 0 12px; }
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #222;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .card-title::before {
+            content: '';
+            width: 4px;
+            height: 18px;
+            background: #07c160;
+            border-radius: 2px;
+        }
+        .row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+        .row:last-child { margin-bottom: 0; }
+        .label {
+            width: 90px;
+            color: #555;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+        select, input[type="text"] {
+            flex: 1;
+            min-width: 140px;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 15px;
+            background: #fafafa;
+            outline: none;
+        }
+        select:focus, input[type="text"]:focus {
+            border-color: #07c160;
+            background: white;
+        }
+        .btn {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: none;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-primary {
+            background: #07c160;
+            color: white;
+        }
+        .btn-primary:hover { background: #06a050; }
+        .btn-secondary {
+            background: #e8f5e9;
+            color: #07c160;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+        .btn-secondary:hover { background: #c8e6c9; }
+        .btn-danger {
+            background: #ffebee;
+            color: #c62828;
+            font-size: 12px;
+            padding: 4px 10px;
+        }
+        .btn-danger:hover { background: #ffcdd2; }
+        .btn-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .kong-card {
+            background: #fafafa;
+            border: 1px solid #e8e8e8;
+            border-radius: 10px;
+            padding: 14px;
+            margin-top: 10px;
+            position: relative;
+        }
+        .kong-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .kong-title { font-weight: 600; font-size: 14px; }
+        .empty { color: #999; padding: 12px 0; font-size: 14px; }
+        .tip {
+            font-size: 13px;
+            color: #888;
+            line-height: 1.6;
+            margin-top: 8px;
+            padding: 10px;
+            background: #f5f5f5;
+            border-radius: 8px;
+        }
+        .result-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        .result-table th {
+            background: #f0f0f0;
+            padding: 10px 6px;
+            font-weight: 600;
+            text-align: center;
+        }
+        .result-table td {
+            padding: 10px 6px;
+            text-align: center;
+            border-bottom: 1px solid #eee;
+        }
+        .win { color: #07c160; font-weight: 700; }
+        .lose { color: #c62828; font-weight: 700; }
+        .even { color: #666; font-weight: 600; }
+        .horse-tag {
+            display: inline-block;
+            padding: 4px 10px;
+            margin: 4px 6px 4px 0;
+            background: #e8f5e9;
+            border-radius: 6px;
+            font-size: 13px;
+        }
+        .transaction {
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+            font-size: 14px;
+        }
+        .transaction:last-child { border-bottom: none; }
+        .reason { font-size: 12px; color: #888; margin-top: 3px; }
+        .total { font-weight: 700; font-size: 16px; margin-top: 12px; padding-top: 10px; border-top: 2px solid #ddd; }
+        .hidden { display: none; }
+
+        /* 麻将牌按钮 */
+        .tile-grid {
+            display: grid;
+            grid-template-columns: repeat(9, 1fr);
+            gap: 8px;
+            margin-top: 12px;
+        }
+        .tile-btn {
+            aspect-ratio: 3/4;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #fff 0%, #f5f5f5 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: 700;
+            color: #333;
+            position: relative;
+            padding: 4px 2px;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .tile-btn:active {
+            transform: scale(0.95);
+            border-color: #07c160;
+        }
+        .tile-btn .tile-num {
+            font-size: 10px;
+            color: #999;
+            margin-top: 2px;
+        }
+        .tile-btn.wind { color: #1976d2; }
+        .tile-btn.dragon { color: #c62828; }
+        .tile-btn.suit-w { color: #1565c0; }
+        .tile-btn.suit-t { color: #388e3c; }
+        .tile-btn.suit-b { color: #e65100; }
+
+        .selected-horses {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            min-height: 40px;
+            padding: 10px;
+            background: #f8f8f8;
+            border-radius: 10px;
+            margin-bottom: 12px;
+            align-items: center;
+        }
+        .selected-horses .empty-hint {
+            color: #aaa;
+            font-size: 13px;
+            width: 100%;
+            text-align: center;
+        }
+        .horse-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 10px;
+            background: #e8f5e9;
+            border: 1px solid #a5d6a7;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            user-select: none;
+        }
+        .horse-chip:active { background: #c8e6c9; }
+        .horse-chip .chip-x {
+            color: #c62828;
+            font-weight: 700;
+            font-size: 12px;
+        }
+
+        .tile-section-title {
+            font-size: 13px;
+            color: #888;
+            margin-top: 10px;
+            margin-bottom: 4px;
+        }
+
+        @media (max-width: 400px) {
+            .label { width: 80px; font-size: 13px; }
+            select, input[type="text"] { font-size: 14px; padding: 8px 10px; }
+            .tile-grid { gap: 5px; }
+            .tile-btn { font-size: 15px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>地方麻将计算器</h1>
+        <p>支持自摸、点炮、杠牌、买马结算</p>
+    </div>
+
+    <div class="container">
+        <!-- 和牌设置 -->
+        <div class="card">
+            <div class="card-title">1. 和牌设置</div>
+            <div class="row">
+                <span class="label">胡牌方式</span>
+                <select id="winType" onchange="onWinTypeChange()">
+                    <option value="none">无人胡牌</option>
+                    <option value="self">自摸</option>
+                    <option value="discard">点炮</option>
+                </select>
+            </div>
+            <div id="selfDrawSection" class="hidden">
+                <div class="row">
+                    <span class="label">自摸玩家</span>
+                    <select id="selfWinner">
+                        <option value="0">庄家</option>
+                        <option value="1">下家</option>
+                        <option value="2">对家</option>
+                        <option value="3">上家</option>
+                    </select>
+                </div>
+                <div class="row">
+                    <span class="label">自摸番数</span>
+                    <select id="selfFan">
+                        <option value="1">1 番</option>
+                        <option value="2">2 番</option>
+                        <option value="4">4 番</option>
+                        <option value="8">8 番</option>
+                    </select>
+                </div>
+            </div>
+            <div id="discardSection" class="hidden">
+                <div class="row">
+                    <span class="label">胡牌玩家</span>
+                    <select id="discardWinner">
+                        <option value="0">庄家</option>
+                        <option value="1">下家</option>
+                        <option value="2">对家</option>
+                        <option value="3">上家</option>
+                    </select>
+                </div>
+                <div class="row">
+                    <span class="label">点炮玩家</span>
+                    <select id="discardLoser">
+                        <option value="0">庄家</option>
+                        <option value="1" selected>下家</option>
+                        <option value="2">对家</option>
+                        <option value="3">上家</option>
+                    </select>
+                </div>
+                <div class="row">
+                    <span class="label">点炮番数</span>
+                    <select id="discardFan">
+                        <option value="4">4 番</option>
+                        <option value="8">8 番</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- 杠牌 -->
+        <div class="card">
+            <div class="card-title">2. 杠牌</div>
+            <div class="btn-row">
+                <button class="btn btn-secondary" onclick="addKong('direct')">+ 直杠</button>
+                <button class="btn btn-secondary" onclick="addKong('added')">+ 加杠</button>
+                <button class="btn btn-secondary" onclick="addKong('concealed')">+ 暗杠</button>
+            </div>
+            <div id="kongList"></div>
+        </div>
+
+        <!-- 买马 -->
+        <div class="card">
+            <div class="card-title">3. 买马</div>
+            <div class="tile-section-title">已选马牌（点击删除）</div>
+            <div class="selected-horses" id="selectedHorses" onclick="onHorseChipClick(event)">
+                <span class="empty-hint">尚未选择马牌，点击下方牌面添加</span>
+            </div>
+
+            <div class="tile-section-title">数字牌</div>
+            <div class="tile-grid" id="numberTiles"></div>
+
+            <div class="tile-section-title">字牌</div>
+            <div class="tile-grid" style="grid-template-columns: repeat(7, 1fr);" id="wordTiles"></div>
+
+            <div class="tip" style="margin-top:12px;">
+                💡 映射规则：数字即牌面数字（东=1, 南=2, 西=3, 北=4, 中=1, 发=2, 白=3），从庄家起数，1=庄家，2=下家，3=对家，4=上家循环。
+            </div>
+        </div>
+
+        <!-- 操作 -->
+        <div class="card">
+            <div class="btn-row">
+                <button class="btn btn-primary" onclick="calculate()" style="flex:1;font-size:16px;padding:12px;">🀄 计算结果</button>
+                <button class="btn btn-secondary" onclick="resetAll()">重置</button>
+            </div>
+        </div>
+
+        <!-- 最终结果 -->
+        <div id="finalResultCard" class="card hidden">
+            <div class="card-title">最终结果</div>
+            <table class="result-table">
+                <thead><tr><th>玩家</th><th>收入</th><th>支出</th><th>净盈亏</th></tr></thead>
+                <tbody id="finalResultBody"></tbody>
+            </table>
+            <div id="totalScore" class="total"></div>
+        </div>
+
+        <!-- 明细 -->
+        <div id="detailCard" class="card hidden">
+            <div class="card-title">结算明细</div>
+            <div id="detailList"></div>
+        </div>
+    </div>
+
+<script>
+// ==================== 核心引擎 ====================
+
+const PLAYERS = ['庄家', '下家', '对家', '上家'];
+const ALL_PLAYERS = ['庄家', '下家', '对家', '上家', '买马人'];
+const M_INDEX = 4;
+
+const KONG_TYPES = { direct: '直杠', added: '加杠', concealed: '暗杠' };
+
+const WIND_MAP = { '东': 1, '南': 2, '西': 3, '北': 4 };
+const WORD_MAP = { '中': 1, '发': 2, '白': 3 };
+const VALID_SUITS = ['万', '条', '筒', '萬', '索', '饼'];
+
+function parseTile(token) {
+    token = token.trim();
+    if (!token) return null;
+    if (WIND_MAP[token] !== undefined) return { number: WIND_MAP[token], display: token, type: '风牌' };
+    if (WORD_MAP[token] !== undefined) return { number: WORD_MAP[token], display: token, type: '箭牌' };
+    for (const suit of VALID_SUITS) {
+        if (token.endsWith(suit)) {
+            const num = parseInt(token.slice(0, -suit.length), 10);
+            if (!isNaN(num) && num >= 1 && num <= 9) return { number: num, display: token, type: '数牌' };
+        }
+    }
+    const pureNum = parseInt(token, 10);
+    if (!isNaN(pureNum) && pureNum >= 1 && pureNum <= 9) return { number: pureNum, display: token, type: '数字' };
+    return null;
+}
+
+function parseHorseInput(input) {
+    const raw = String(input || '').trim();
+    if (!raw) return { ok: true, tiles: [] };
+    const tokens = raw.split(/[,，、;；|\s]+/).filter(t => t.trim());
+    const tiles = [];
+    const invalid = [];
+    for (const token of tokens) {
+        const result = parseTile(token);
+        if (result) { tiles.push(result); }
+        else if (/^\d{2,}$/.test(token)) {
+            for (const ch of token) {
+                const n = parseInt(ch, 10);
+                if (n >= 1 && n <= 9) tiles.push({ number: n, display: ch, type: '数字' });
+                else invalid.push(ch);
+            }
+        } else { invalid.push(token); }
+    }
+    if (invalid.length > 0) return { ok: false, error: '无法识别：' + invalid.join('、') };
+    return { ok: true, tiles };
+}
+
+// ==================== 界面逻辑 ====================
+
+let kongs = [];
+let selectedHorses = [];
+
+function renderTileButtons() {
+    const numberContainer = document.getElementById('numberTiles');
+    let numberHtml = '';
+    for (let n = 1; n <= 9; n++) {
+        numberHtml += `<div class="tile-btn" onclick="addHorse('${n}')">
+            <div style="font-size:22px">${n}</div>
+        </div>`;
+    }
+    numberContainer.innerHTML = numberHtml;
+
+    const wordContainer = document.getElementById('wordTiles');
+    const words = [
+        { t: '东', n: 1, cls: 'wind' },
+        { t: '南', n: 2, cls: 'wind' },
+        { t: '西', n: 3, cls: 'wind' },
+        { t: '北', n: 4, cls: 'wind' },
+        { t: '中', n: 1, cls: 'dragon' },
+        { t: '发', n: 2, cls: 'dragon' },
+        { t: '白', n: 3, cls: 'dragon' }
+    ];
+    wordContainer.innerHTML = words.map(w =>
+        `<div class="tile-btn ${w.cls}" onclick="addHorse('${w.t}')">
+            <div>${w.t}</div>
+            <div class="tile-num">${w.n}</div>
+        </div>`
+    ).join('');
+}
+
+function addHorse(tileStr) {
+    selectedHorses.push(tileStr);
+    renderSelectedHorses();
+}
+
+function removeHorse(index) {
+    selectedHorses.splice(index, 1);
+    renderSelectedHorses();
+}
+
+function onHorseChipClick(e) {
+    const chip = e.target.closest('.horse-chip');
+    if (!chip) return;
+    const idx = Number(chip.dataset.index);
+    if (!isNaN(idx)) removeHorse(idx);
+}
+
+function renderSelectedHorses() {
+    const container = document.getElementById('selectedHorses');
+    if (selectedHorses.length === 0) {
+        container.innerHTML = '<span class="empty-hint">尚未选择马牌，点击下方牌面添加</span>';
+        return;
+    }
+    container.innerHTML = selectedHorses.map((h, i) => {
+        const parsed = parseTile(h);
+        const label = parsed ? `${parsed.display}(${parsed.number})` : h;
+        return `<span class="horse-chip" data-index="${i}">${label}<span class="chip-x">✕</span></span>`;
+    }).join('');
+}
+
+function onWinTypeChange() {
+    const type = document.getElementById('winType').value;
+    document.getElementById('selfDrawSection').classList.toggle('hidden', type !== 'self');
+    document.getElementById('discardSection').classList.toggle('hidden', type !== 'discard');
+}
+
+function renderKongs() {
+    const container = document.getElementById('kongList');
+    if (kongs.length === 0) { container.innerHTML = '<div class="empty">暂无杠牌</div>'; return; }
+    container.innerHTML = kongs.map((k, i) => `
+        <div class="kong-card">
+            <div class="kong-header">
+                <span class="kong-title">第 ${i + 1} 个杠 · ${KONG_TYPES[k.type]}</span>
+                <button class="btn btn-danger" onclick="removeKong(${i})">删除</button>
+            </div>
+            <div class="row">
+                <span class="label">杠牌者</span>
+                <select onchange="kongs[${i}].player=Number(this.value);" style="flex:1;margin-right:8px;">
+                    ${PLAYERS.map((p, idx) => `<option value="${idx}" ${k.player===idx?'selected':''}>${p}</option>`).join('')}
+                </select>
+                ${k.type === 'direct' ? `
+                <span class="label" style="width:70px;">点杠者</span>
+                <select onchange="kongs[${i}].from=Number(this.value);" style="flex:1;">
+                    ${PLAYERS.map((p, idx) => `<option value="${idx}" ${k.from===idx?'selected':''}>${p}</option>`).join('')}
+                </select>` : ''}
+            </div>
+        </div>
+    `).join('');
+}
+
+function addKong(type) {
+    const player = 0, from = 1;
+    kongs.push({ id: Date.now() + Math.random(), type, player, from });
+    renderKongs();
+}
+
+function removeKong(index) {
+    kongs.splice(index, 1);
+    renderKongs();
+}
+
+function resetAll() {
+    document.getElementById('winType').value = 'none';
+    document.getElementById('selfWinner').value = '0';
+    document.getElementById('selfFan').value = '1';
+    document.getElementById('discardWinner').value = '0';
+    document.getElementById('discardLoser').value = '1';
+    document.getElementById('discardFan').value = '4';
+    selectedHorses = [];
+    renderSelectedHorses();
+    kongs = [];
+    renderKongs();
+    onWinTypeChange();
+    hideResults();
+}
+
+function hideResults() {
+    ['finalResultCard', 'detailCard'].forEach(id => {
+        document.getElementById(id).classList.add('hidden');
+    });
+}
+
+
+
+// ==================== 计算逻辑 ====================
+
+function buildBaseTransactions() {
+    const transactions = [];
+    const winType = document.getElementById('winType').value;
+    const winner = Number(document.getElementById('selfWinner').value);
+    const discardWinner = Number(document.getElementById('discardWinner').value);
+    const discardLoser = Number(document.getElementById('discardLoser').value);
+
+    if (winType === 'self') {
+        const fan = Number(document.getElementById('selfFan').value);
+        for (let i = 0; i < 4; i++) {
+            if (i !== winner) {
+                transactions.push({
+                    payer: i, receiver: winner, amount: fan,
+                    reason: `${PLAYERS[winner]} 自摸 ${fan} 番，${PLAYERS[i]} 支付`
+                });
+            }
+        }
+    }
+    if (winType === 'discard') {
+        if (discardWinner === discardLoser) {
+            alert('胡牌玩家和点炮玩家不能是同一人');
+            return null;
+        }
+        const fan = Number(document.getElementById('discardFan').value);
+        transactions.push({
+            payer: discardLoser, receiver: discardWinner, amount: fan,
+            reason: `${PLAYERS[discardWinner]} 胡牌，${PLAYERS[discardLoser]} 点炮 ${fan} 番`
+        });
+    }
+    for (let k = 0; k < kongs.length; k++) {
+        const kong = kongs[k];
+        const p = kong.player, f = kong.from;
+        if (kong.type === 'direct') {
+            if (p === f) { alert(`第 ${k+1} 个直杠：杠牌者和点杠者不能相同`); return null; }
+            transactions.push({ payer: f, receiver: p, amount: 2, reason: `${PLAYERS[p]} 直杠，${PLAYERS[f]} 点杠付 2 番` });
+            for (let i = 0; i < 4; i++) if (i !== p && i !== f) {
+                transactions.push({ payer: i, receiver: p, amount: 1, reason: `${PLAYERS[p]} 直杠，${PLAYERS[i]} 付 1 番` });
+            }
+        } else if (kong.type === 'added') {
+            for (let i = 0; i < 4; i++) if (i !== p) {
+                transactions.push({ payer: i, receiver: p, amount: 1, reason: `${PLAYERS[p]} 加杠，${PLAYERS[i]} 付 1 番` });
+            }
+        } else if (kong.type === 'concealed') {
+            for (let i = 0; i < 4; i++) if (i !== p) {
+                transactions.push({ payer: i, receiver: p, amount: 2, reason: `${PLAYERS[p]} 暗杠，${PLAYERS[i]} 付 2 番` });
+            }
+        }
+    }
+    return transactions;
+}
+
+function calculateSettlement(baseTransactions, horseCounts, includeHorse) {
+    const income = [0, 0, 0, 0, 0];
+    const expense = [0, 0, 0, 0, 0];
+    const details = [];
+    function addPay(payer, receiver, amount, reason) {
+        if (!amount || amount <= 0) return;
+        expense[payer] += amount;
+        income[receiver] += amount;
+        details.push({ payer: ALL_PLAYERS[payer], receiver: ALL_PLAYERS[receiver], amount, reason });
+    }
+    for (const tx of baseTransactions) {
+        addPay(tx.payer, tx.receiver, tx.amount, tx.reason);
+        if (includeHorse) {
+            const rhc = horseCounts[tx.receiver] || 0;
+            const phc = horseCounts[tx.payer] || 0;
+            if (rhc > 0) addPay(tx.payer, M_INDEX, tx.amount * rhc, `买马买中 ${PLAYERS[tx.receiver]} ${rhc} 次`);
+            if (phc > 0) addPay(M_INDEX, tx.receiver, tx.amount * phc, `买马买中 ${PLAYERS[tx.payer]} ${phc} 次`);
+        }
+    }
+    const rows = [];
+    for (let i = 0; i < 5; i++) {
+        const score = income[i] - expense[i];
+        rows.push({ name: ALL_PLAYERS[i], income: income[i], expense: expense[i], score,
+            scoreText: score > 0 ? '+' + score : String(score),
+            scoreClass: score > 0 ? 'win' : score < 0 ? 'lose' : 'even'
+        });
+    }
+    return { rows, details };
+}
+
+function calculate() {
+    hideResults();
+    const baseTx = buildBaseTransactions();
+    if (!baseTx) return;
+
+    const horseRaw = selectedHorses.join(',');
+    const parsed = parseHorseInput(horseRaw);
+    if (!parsed.ok) { alert(parsed.error); return; }
+
+    const horseCounts = [0, 0, 0, 0];
+    const horseDetails = [];
+    for (const tile of parsed.tiles) {
+        const playerIndex = (tile.number - 1) % 4;
+        horseCounts[playerIndex]++;
+        horseDetails.push({ ...tile, player: PLAYERS[playerIndex] });
+    }
+
+    const finalSettle = calculateSettlement(baseTx, horseCounts, true);
+
+    // 渲染最终结果
+    document.getElementById('finalResultCard').classList.remove('hidden');
+    document.getElementById('finalResultBody').innerHTML = finalSettle.rows.map(r =>
+        `<tr><td>${r.name}</td><td>${r.income}</td><td>${r.expense}</td><td class="${r.scoreClass}">${r.scoreText}</td></tr>`
+    ).join('');
+    const total = finalSettle.rows.reduce((s, r) => s + r.score, 0);
+    document.getElementById('totalScore').innerHTML = `合计：${total === 0 ? '0（总账平衡）' : total}`;
+
+    // 渲染明细
+    if (finalSettle.details.length > 0) {
+        document.getElementById('detailCard').classList.remove('hidden');
+        document.getElementById('detailList').innerHTML = finalSettle.details.map(d =>
+            `<div class="transaction">
+                <div><strong>${d.payer}</strong> → <strong>${d.receiver}</strong>：${d.amount} 番</div>
+                <div class="reason">${d.reason}</div>
+            </div>`
+        ).join('');
+    }
+}
+
+// 初始化
+renderKongs();
+renderTileButtons();
+renderSelectedHorses();
+</script>
+</body>
+</html>
